@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "624398231817",
+    "project_id": "gymbros-36feb",
+    "storage_bucket": "gymbros-36feb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624398231817:android:e5691d0066861314d4cbd8",
+        "android_client_info": {
+          "package_name": "com.orbital.gymbros"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "624398231817-0jq8m21bkvn0gbq7c60icq998usole92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAttlfzSKyNKG08qhf0nEJAsxYNXnRtMYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "624398231817-0jq8m21bkvn0gbq7c60icq998usole92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

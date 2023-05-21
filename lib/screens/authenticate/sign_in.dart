@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class SignIn extends StatefulWidget {
+
+  final Function toggleView;
+  SignIn({ required this.toggleView });
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -9,9 +13,13 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
 
+  final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
+
   String username = '';
   String email = '';
   String password = '';
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +30,9 @@ class _SignInState extends State<SignIn> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              widget.toggleView();
+            },
             color: Colors.black,
             icon: const Icon(Icons.arrow_back_outlined),
           ),
@@ -47,6 +57,7 @@ class _SignInState extends State<SignIn> {
               const SizedBox(height: 64.0),
               Container(
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -81,11 +92,12 @@ class _SignInState extends State<SignIn> {
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 10),
-                      TextField(
+                      TextFormField(
                         decoration: textInputDecoration,
+                        validator: (val) => (val!.isEmpty) ? 'Enter an email' : null,
                         onChanged: (val) {
                           setState(() {
-                            this.email = val;
+                            setState(() => email = val);
                           });
                         },
                       ),
@@ -101,12 +113,13 @@ class _SignInState extends State<SignIn> {
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 10),
-                      TextField(
+                      TextFormField(
                         decoration: textInputDecoration,
                         obscureText: true,
+                        validator: (val) => val!.length < 6 ? 'Enter a password longer than 6 chars!' : null,
                         onChanged: (val) {
                           setState(() {
-                            this.password = val;
+                            setState(() => password = val);
                           });
                         },
                       )
@@ -118,9 +131,14 @@ class _SignInState extends State<SignIn> {
               ElevatedButton(
                 //TODO: implement sign up
                   onPressed: () async {
-                    print(email);
-                    print(password);
-                    print(username);
+                    if(_formKey.currentState!.validate()){
+                      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                      if(result == null) {
+                        setState(() {
+                          error = "Please provide a valid email";
+                        });
+                      }
+                    }
                   },
                   child: Text(
                     "Sign up".toUpperCase(),

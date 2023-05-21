@@ -1,7 +1,11 @@
+import 'package:gymbros/services/authservice.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class DirectLogIn extends StatefulWidget {
+
+  final Function toggleView;
+  DirectLogIn({ required this.toggleView });
 
   @override
   State<DirectLogIn> createState() => _DirectLogInState();
@@ -9,8 +13,13 @@ class DirectLogIn extends StatefulWidget {
 
 class _DirectLogInState extends State<DirectLogIn> {
 
+  final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
+
   String username = '';
+  String email = '';
   String password = '';
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +30,9 @@ class _DirectLogInState extends State<DirectLogIn> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              widget.toggleView();
+            },
             color: Colors.black,
             icon: const Icon(Icons.arrow_back_outlined),
           ),
@@ -46,6 +57,7 @@ class _DirectLogInState extends State<DirectLogIn> {
               const SizedBox(height: 64.0),
               Container(
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -60,12 +72,11 @@ class _DirectLogInState extends State<DirectLogIn> {
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 10),
-                      TextField(
+                      TextFormField(
                         decoration: textInputDecoration,
+                        validator: (val) => (val!.isEmpty) ? 'Enter an email' : null,
                         onChanged: (val) {
-                          setState(() {
-                            this.username = val;
-                          });
+                          setState(() => email = val);
                         },
                       ),
                       const SizedBox(height: 32),
@@ -80,13 +91,12 @@ class _DirectLogInState extends State<DirectLogIn> {
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 10),
-                      TextField(
+                      TextFormField(
                         decoration: textInputDecoration,
+                        validator: (val) => val!.length < 6 ? 'Enter a password longer than 6 chars!' : null,
                         obscureText: true,
                         onChanged: (val) {
-                          setState(() {
-                            this.password = val;
-                          });
+                          setState(() => password = val);
                         },
                       )
                     ],
@@ -97,8 +107,14 @@ class _DirectLogInState extends State<DirectLogIn> {
               ElevatedButton(
                 //TODO: implement sign up
                   onPressed: () async {
-                    print(password);
-                    print(username);
+                    if(_formKey.currentState!.validate()){
+                      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                      if(result == null) {
+                        setState(() {
+                          error = "Invalid Username and Password!";
+                        });
+                      }
+                    }
                   },
                   child: Text(
                     "Log In".toUpperCase(),

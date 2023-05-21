@@ -4,6 +4,8 @@ import 'package:gymbros/screens/authenticate/log_in.dart';
 import 'package:gymbros/screens/authenticate/sign_in.dart';
 import 'package:gymbros/screens/authenticate/direct_login.dart';
 import 'package:gymbros/screens/home/home.dart';
+import 'package:gymbros/models/gbuser.dart';
+import "package:provider/provider.dart";
 
 class Wrapper extends StatelessWidget {
   const Wrapper({Key? key}) : super(key: key);
@@ -11,7 +13,14 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final user = Provider.of<GbUser?>(context);
+
     //return home or authenticate widget
-    return DirectLogIn();
+    if (user == null) {
+      return Authenticate();
+    } else {
+      return Home();
+    }
+
   }
 }

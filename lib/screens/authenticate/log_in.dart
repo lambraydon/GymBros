@@ -25,7 +25,7 @@ class _LogInState extends State<LogIn> {
             ),
             const SizedBox(height: 64.0),
             Text(
-              "Achieve you fitness goals today",
+              "Achieve your fitness goals today",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
