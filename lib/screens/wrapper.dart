@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/authenticate/authenticate.dart';
 import 'package:gymbros/screens/authenticate/log_in.dart';
 import 'package:gymbros/screens/authenticate/sign_in.dart';
 import 'package:gymbros/screens/authenticate/direct_login.dart';
@@ -17,10 +16,9 @@ class Wrapper extends StatelessWidget {
 
     //return home or authenticate widget
     if (user == null) {
-      return Authenticate();
+      return LogIn();
     } else {
       return Home();
     }
-
   }
 }

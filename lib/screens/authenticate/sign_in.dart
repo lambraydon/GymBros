@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/home/home.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class SignIn extends StatefulWidget {
 
-  final Function toggleView;
-  SignIn({ required this.toggleView });
+  // final Function toggleView;
+  // SignIn({ required this.toggleView });
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -31,7 +32,7 @@ class _SignInState extends State<SignIn> {
           elevation: 0.0,
           leading: IconButton(
             onPressed: () {
-              widget.toggleView();
+              Navigator.pop(context);
             },
             color: Colors.black,
             icon: const Icon(Icons.arrow_back_outlined),
@@ -42,7 +43,7 @@ class _SignInState extends State<SignIn> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Row(
+              const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[Text(
                   "Sign up with email",
@@ -63,7 +64,7 @@ class _SignInState extends State<SignIn> {
                     children: <Widget>[
                       Text(
                         "username".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.normal,
@@ -72,18 +73,19 @@ class _SignInState extends State<SignIn> {
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(height: 10),
-                      TextField(
+                      TextFormField(
                         decoration: textInputDecoration,
+                        validator: (val) => (val!.isEmpty) ? 'Enter a username' : null,
                         onChanged: (val) {
                           setState(() {
-                            this.username = val;
+                            username = val;
                           });
                         },
                       ),
                       const SizedBox(height: 32),
                       Text(
                         "email".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.normal,
@@ -104,7 +106,7 @@ class _SignInState extends State<SignIn> {
                       const SizedBox(height: 32),
                       Text(
                         "password".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.normal,
@@ -137,28 +139,30 @@ class _SignInState extends State<SignIn> {
                         setState(() {
                           error = "Please provide a valid email";
                         });
+                      } else {
+                        Navigator.pop(context);
                       }
                     }
                   },
-                  child: Text(
-                    "Sign up".toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                     backgroundColor: MaterialStateProperty.all<Color>(Color(0xff6deb4d)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4.0),
-                            side: BorderSide(color: Color(0xff6deb4d))
+                            side: const BorderSide(color: Color(0xff6deb4d))
                         )
                     ),
                     elevation: MaterialStateProperty.all<double>(0),
-                    minimumSize: MaterialStateProperty.all<Size>(Size(332, 56)),
-                  )
+                    minimumSize: MaterialStateProperty.all<Size>(const Size(332, 56)),
+                  ),
+                  child: Text(
+                    "Sign up".toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
               ),
             ],
           ),
