@@ -4,8 +4,8 @@ import 'package:gymbros/shared/constants.dart';
 
 class DirectLogIn extends StatefulWidget {
 
-  final Function toggleView;
-  DirectLogIn({ required this.toggleView });
+  // final Function toggleView;
+  // DirectLogIn({ required this.toggleView });
 
   @override
   State<DirectLogIn> createState() => _DirectLogInState();
@@ -31,7 +31,7 @@ class _DirectLogInState extends State<DirectLogIn> {
           elevation: 0.0,
           leading: IconButton(
             onPressed: () {
-              widget.toggleView();
+              Navigator.pop(context);
             },
             color: Colors.black,
             icon: const Icon(Icons.arrow_back_outlined),
@@ -42,7 +42,7 @@ class _DirectLogInState extends State<DirectLogIn> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Row(
+              const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[Text(
                     "Log In",
@@ -63,7 +63,7 @@ class _DirectLogInState extends State<DirectLogIn> {
                     children: <Widget>[
                       Text(
                         "username".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.normal,
@@ -82,7 +82,7 @@ class _DirectLogInState extends State<DirectLogIn> {
                       const SizedBox(height: 32),
                       Text(
                         "password".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                           fontStyle: FontStyle.normal,
@@ -116,25 +116,25 @@ class _DirectLogInState extends State<DirectLogIn> {
                       }
                     }
                   },
-                  child: Text(
-                    "Log In".toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xff6deb4d)),
+                    backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff6deb4d)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4.0),
-                            side: BorderSide(color: Color(0xff6deb4d))
+                            side: const BorderSide(color: Color(0xff6deb4d))
                         )
                     ),
                     elevation: MaterialStateProperty.all<double>(0),
-                    minimumSize: MaterialStateProperty.all<Size>(Size(332, 56)),
-                  )
+                    minimumSize: MaterialStateProperty.all<Size>(const Size(332, 56)),
+                  ),
+                child: Text(
+                  "Log In".toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ],
           ),
