@@ -8,8 +8,11 @@ class DatabaseService {
   //collection reference
   final CollectionReference userProfiles = FirebaseFirestore.instance.collection("userProfiles");
 
-  Future updateUserProfile(String name) {
-    return await userProfiles.add(uid) .setData()
+  Future<void> updateUserProfile(String name) async{
+    return await userProfiles.doc(uid).set({
+     "Name": name
+    })
+    .catchError((error) => print("Failed to create user: $error"));
   }
 }
 

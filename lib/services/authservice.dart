@@ -1,6 +1,7 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:gymbros/models/gbuser.dart";
+import "package:gymbros/services/databaseservice.dart";
 
 class AuthService {
 
@@ -33,6 +34,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = result.user!;
+      await DatabaseService(uid: user.uid).updateUserProfile("New GymBro");
       return GbUser(userID: user.uid);
     } catch (error) {
       print(error.toString());
@@ -44,6 +46,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User user = result.user!;
+      //create new userProfile on registration
       return GbUser(userID: user.uid);
     } catch (error) {
       print(error.toString());
