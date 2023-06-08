@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import  "package:gymbros/models/gbprofile.dart";
 
 class DatabaseService {
 
@@ -13,6 +14,18 @@ class DatabaseService {
      "Name": name
     })
     .catchError((error) => print("Failed to create user: $error"));
+  }
+
+  //get profile Stream
+  Stream<List<GbProfile?>> get profiles{
+    return userProfiles.snapshots()
+    .map(_gbProfileListFromSnapshot);
+  }
+
+  List<GbProfile?> _gbProfileListFromSnapshot(QuerySnapshot profileSnap) {
+    return profileSnap.docs.map((doc){
+      return GbProfile(name: doc.get("name"));
+    }).toList();
   }
 }
 

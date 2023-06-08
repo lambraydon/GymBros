@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:gymbros/models/gbuser.dart";
@@ -61,6 +62,14 @@ class AuthService {
       print(e.toString());
       return null;
     }
+  }
+
+  String getUid() {
+    return FirebaseAuth.instance.currentUser!.uid;
+  }
+
+  String getEmail() {
+    return FirebaseAuth.instance.currentUser!.email!;
   }
   // register with Facebook
 
