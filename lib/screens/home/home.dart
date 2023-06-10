@@ -1,18 +1,18 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/home/userprofile.dart';
 import 'package:gymbros/services/authservice.dart';
-import 'package:provider/provider.dart';
-import 'package:gymbros/services/databaseservice.dart';
-import '../../models/gbprofile.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => _HomeState();
+}
+class _HomeState extends State<Home> {
 
   final AuthService _auth = AuthService();
   final CollectionReference userProfiles = FirebaseFirestore.instance.collection("userProfiles");
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,6 @@ class Home extends StatelessWidget {
             //get user data
             if (snapshot.hasData) {
               final userData = snapshot.data!.data() as Map<String,dynamic>;
-
               return ListView(
                   children: [
                   SizedBox(height: 50),
@@ -50,7 +49,11 @@ class Home extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey[700]),
                     ),
-                    MyTextField(text: userData["Name"], sectionName: "Username : ")
+                    MyTextField(
+                        text: userData["Name"],
+                        sectionName: "Username : ",
+                        onPressedFunc: () => editField("Name")
+            )
                   ]
               );
             } else if(snapshot.hasError) {
@@ -65,6 +68,44 @@ class Home extends StatelessWidget {
             },
         ),
     );
+  }
+  //edit function
+  Future<void> editField(String field) async{
+    String newVal = "";
+    await showDialog(
+        context: context ,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Text("Edit + $field",
+              style: const TextStyle(color: Colors.white,)
+          ),
+          content: TextField(
+            autofocus:true,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: "Enter new $field",
+              hintStyle: TextStyle(color: Colors.grey),
+            ),
+            onChanged: (value) {
+              newVal = value;
+            },
+          ),
+          actions: [
+            // cancel Button
+            TextButton(onPressed: ()=> Navigator.pop(context),
+                child:Text ("Cancel",style: TextStyle(color: Colors.white)
+                )
+            ),
+            TextButton(onPressed: () => Navigator.of(context).pop(newVal),
+                child: Text("Save", style: TextStyle(color: Colors.white)
+                )
+            )
+          ],
+        )
+    );
+    if (newVal.trim().length > 0) {
+      await userProfiles.doc(_auth.getUid()).update({field: newVal});
+    }
   }
   /*
   @override

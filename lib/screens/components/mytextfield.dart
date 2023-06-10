@@ -3,7 +3,8 @@ import "package:flutter/material.dart";
 class MyTextField extends StatelessWidget {
   final String text;
   final String sectionName;
-  const MyTextField({super.key, required this.text, required this.sectionName});
+  final void Function()? onPressedFunc;
+  const MyTextField({super.key, required this.text, required this.sectionName, required this.onPressedFunc});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +18,20 @@ class MyTextField extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          //Section Name
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              //Section Name
               Text(sectionName),
 
-              //Text
-
-              Text(text)
+              //edit button
+              IconButton(onPressed: onPressedFunc,
+                  icon: Icon(Icons.settings,
+                color: Colors.grey[400],)
+              )
             ],
-          )
+          ),
+          Text(text)
         ],
       ),
 

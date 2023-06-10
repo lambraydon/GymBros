@@ -134,7 +134,7 @@ class _SignInState extends State<SignIn> {
                 //TODO: implement sign up
                   onPressed: () async {
                     if(_formKey.currentState!.validate()){
-                      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                      dynamic result = await _auth.registerWithEmailAndPassword(email, password, username);
                       if(result == null) {
                         setState(() {
                           error = "Please provide a valid email";
