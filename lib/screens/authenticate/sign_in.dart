@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/home/home.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class SignIn extends StatefulWidget {
-
-  // final Function toggleView;
-  // SignIn({ required this.toggleView });
 
   @override
   State<SignIn> createState() => _SignInState();

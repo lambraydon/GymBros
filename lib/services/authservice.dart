@@ -1,11 +1,11 @@
 import "package:firebase_auth/firebase_auth.dart";
-import "package:flutter/material.dart";
 import "package:gymbros/models/gbuser.dart";
 import "package:gymbros/services/databaseservice.dart";
 
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
 
   //authentication changes user Stream
   Stream<GbUser?> get user {
@@ -34,7 +34,8 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = result.user!;
-      await DatabaseService(uid: user.uid).updateUserProfile("New GymBro");
+      DatabaseService db = DatabaseService(uid: user.uid);
+      await db.updateUserProfile("New GymBro");
       return GbUser(userID: user.uid);
     } catch (error) {
       print(error.toString());
@@ -61,6 +62,10 @@ class AuthService {
       print(e.toString());
       return null;
     }
+  }
+
+  String getUid() {
+    return FirebaseAuth.instance.currentUser!.uid;
   }
   // register with Facebook
 
