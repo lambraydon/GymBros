@@ -4,6 +4,7 @@ import 'package:gymbros/screens/authenticate/sign_in.dart';
 import 'package:gymbros/screens/authenticate/direct_login.dart';
 import 'package:gymbros/screens/home/home.dart';
 import 'package:gymbros/models/gbuser.dart';
+import 'package:gymbros/screens/home/pagetoggler.dart';
 import "package:provider/provider.dart";
 
 class Wrapper extends StatelessWidget {
@@ -18,7 +19,7 @@ class Wrapper extends StatelessWidget {
     if (user == null) {
       return LogIn();
     } else {
-      return Home();
+      return PageToggler();
     }
   }
 }
