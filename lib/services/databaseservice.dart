@@ -2,6 +2,8 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/screens/workoutTracker/workout.dart";
 import "../screens/workoutTracker/exercise.dart";
 import "../screens/workoutTracker/set.dart";
+import  "package:gymbros/models/gbprofile.dart";
+
 
 class DatabaseService {
   final String uid;
@@ -16,6 +18,19 @@ class DatabaseService {
     return await userProfiles.doc(uid).set({"Name": name}).catchError(
         (error) => print("Failed to create user: $error"));
   }
+
+  //get profile Stream
+  Stream<List<GbProfile?>> get profiles{
+    return userProfiles.snapshots()
+    .map(_gbProfileListFromSnapshot);
+  }
+
+  List<GbProfile?> _gbProfileListFromSnapshot(QuerySnapshot profileSnap) {
+    return profileSnap.docs.map((doc){
+      return GbProfile(name: doc.get("name"));
+    }).toList();
+  }
+}
 
   // write workout data into workouts sub collection
   void saveWorkoutToDb(Workout workout) async {

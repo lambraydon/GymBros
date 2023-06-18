@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:gymbros/models/gbuser.dart";
 import "package:gymbros/services/databaseservice.dart";
@@ -30,12 +31,11 @@ class AuthService {
   }
 
   // register with email & password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithEmailAndPassword(String email, String password, String username) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = result.user!;
-      DatabaseService db = DatabaseService(uid: user.uid);
-      await db.updateUserProfile("New GymBro");
+      await DatabaseService(uid: user.uid).updateUserProfile(username);
       return GbUser(userID: user.uid);
     } catch (error) {
       print(error.toString());
@@ -67,6 +67,11 @@ class AuthService {
   String getUid() {
     return FirebaseAuth.instance.currentUser!.uid;
   }
+
+  String getEmail() {
+    return FirebaseAuth.instance.currentUser!.email!;
+  }
+
   // register with Facebook
 
   // sign in with Facebook
