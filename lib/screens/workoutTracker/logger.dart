@@ -19,7 +19,7 @@ class Logger extends StatefulWidget {
 class _LoggerState extends State<Logger> {
   //Global key for animated list
   final GlobalKey<AnimatedListState> _key1 = GlobalKey();
-  List<GlobalKey<AnimatedListState>> _listKeys = [];
+  final List<GlobalKey<AnimatedListState>> _listKeys = List.generate(100, (index) => GlobalKey());
 
   // Checkbox was tapped
   void onCheckBoxChanged(String workoutName, String exerciseName, int index) {
