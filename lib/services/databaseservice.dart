@@ -30,7 +30,6 @@ class DatabaseService {
       return GbProfile(name: doc.get("name"));
     }).toList();
   }
-}
 
   // write workout data into workouts sub collection
   void saveWorkoutToDb(Workout workout) async {

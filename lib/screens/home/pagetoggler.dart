@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:gymbros/screens/home/home.dart';
-import 'package:gymbros/services/authservice.dart';
+import 'package:gymbros/screens/workoutTracker/workoutHistory.dart';
 
 class PageToggler extends StatefulWidget {
   const PageToggler({super.key});
@@ -17,7 +17,6 @@ class _PageTogglerState extends State<PageToggler> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     pageController = PageController();
   }
@@ -36,16 +35,19 @@ class _PageTogglerState extends State<PageToggler> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-        children: [
-          Text("home"),
-          Text("post"),
-          Home()
-        ],
         controller: pageController,
         onPageChanged: onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
+        //nest other screen widgets in the children input
+        children: [
+          Text("home"),
+          WorkoutHistory(),
+          Home()
+        ],
       ),
       bottomNavigationBar: CupertinoTabBar(
         items: [
