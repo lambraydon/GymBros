@@ -1,14 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/services/authservice.dart';
+import '../workoutTracker/workoutHistory.dart';
+import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:provider/provider.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
+
 
 class Home extends StatefulWidget {
   @override
   State<Home> createState() => _HomeState();
 }
-class _HomeState extends State<Home> {
 
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<WorkoutData>(context, listen: false).initialiseWorkoutList();
+  }
   final AuthService _auth = AuthService();
   final CollectionReference userProfiles = FirebaseFirestore.instance.collection("userProfiles");
 

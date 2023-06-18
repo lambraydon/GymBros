@@ -1,12 +1,12 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import "package:flutter/material.dart";
 import "package:gymbros/models/gbuser.dart";
 import "package:gymbros/services/databaseservice.dart";
 
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
 
   //authentication changes user Stream
   Stream<GbUser?> get user {
@@ -71,6 +71,7 @@ class AuthService {
   String getEmail() {
     return FirebaseAuth.instance.currentUser!.email!;
   }
+
   // register with Facebook
 
   // sign in with Facebook

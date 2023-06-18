@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/screens/wrapper.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:provider/provider.dart';
@@ -19,10 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   //Stream Provider Logic to listen for change in auth status
   Widget build(BuildContext context) {
-    return StreamProvider<GbUser?>.value(
+    return MultiProvider(providers: [
+      StreamProvider<GbUser?>.value(
         value: AuthService().user,
-        initialData: null,
-        child:MaterialApp(
+        initialData: null),
+      ChangeNotifierProvider(create: (context) => WorkoutData())
+    ],
+        child: const MaterialApp(
           home: Wrapper(),
       ),
     );
