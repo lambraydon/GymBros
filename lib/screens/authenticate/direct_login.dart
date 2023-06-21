@@ -55,64 +55,63 @@ class _DirectLogInState extends State<DirectLogIn> {
                   ),]
               ),
               const SizedBox(height: 64.0),
-              Container(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "username".toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 15.0,
-                        ),
-                        textAlign: TextAlign.left,
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "User Email".toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 15.0,
                       ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: textInputDecoration,
-                        validator: (val) => (val!.isEmpty) ? 'Enter an email' : null,
-                        onChanged: (val) {
-                          setState(() => email = val);
-                        },
+                      textAlign: TextAlign.left,
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      decoration: textInputDecoration,
+                      validator: (val) => (val!.isEmpty) ? 'Enter an email' : null,
+                      onChanged: (val) {
+                        setState(() => email = val);
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      "password".toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 15.0,
                       ),
-                      const SizedBox(height: 32),
-                      Text(
-                        "password".toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 15.0,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: textInputDecoration,
-                        validator: (val) => val!.length < 6 ? 'Enter a password longer than 6 chars!' : null,
-                        obscureText: true,
-                        onChanged: (val) {
-                          setState(() => password = val);
-                        },
-                      )
-                    ],
-                  ),
+                      textAlign: TextAlign.left,
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      decoration: textInputDecoration,
+                      validator: (val) => val!.length < 6 ? 'Enter a password longer than 6 chars!' : null,
+                      obscureText: true,
+                      onChanged: (val) {
+                        setState(() => password = val);
+                      },
+                    )
+                  ],
                 ),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
-                //TODO: implement sign up
                   onPressed: () async {
                     if(_formKey.currentState!.validate()){
                       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                       if(result == null) {
                         setState(() {
-                          error = "Invalid Username and Password!";
+                          error = "Invalid User Email and Password!";
                         });
+                      } else {
+                        Navigator.pop(context);
                       }
                     }
                   },
