@@ -8,17 +8,17 @@ import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 
-class Logger extends StatefulWidget {
+class HistoryLog extends StatefulWidget {
   final Workout workout;
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());
 
-  Logger({super.key, required this.workout});
+  HistoryLog({super.key, required this.workout});
 
   @override
-  State<Logger> createState() => _LoggerState();
+  State<HistoryLog> createState() => _HistoryLog();
 }
 
-class _LoggerState extends State<Logger> {
+class _HistoryLog extends State<HistoryLog> {
   //Global key for animated list
   final GlobalKey<AnimatedListState> _key1 = GlobalKey();
   final List<GlobalKey<AnimatedListState>> _listKeys =
@@ -183,19 +183,12 @@ class _LoggerState extends State<Logger> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           actions: <Widget>[
-            TextButton.icon(
-              icon: const Icon(Icons.save_alt_outlined),
-              label: const Text('Finish'),
+            IconButton(
               onPressed: () {
-                // Save workout to DB
-                widget.db.saveWorkoutToDb(widget.workout);
-
-                // Add workout to local list
-                Provider.of<WorkoutData>(context, listen: false)
-                    .addWorkout(widget.workout);
-
                 Navigator.pop(context);
               },
+              icon: const Icon(Icons.cancel_presentation_outlined),
+              color: Colors.blue,
             ),
           ],
         ),
@@ -316,20 +309,6 @@ class _LoggerState extends State<Logger> {
                         ),
                       ));
                 }),
-            const SizedBox(
-              height: 64,
-            ),
-            OutlinedButton(
-                onPressed: createNewExercise,
-                child: const Text("Add Exercise")),
-            const SizedBox(
-              height: 32,
-            ),
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Cancel Workout"))
           ],
         ),
       ),

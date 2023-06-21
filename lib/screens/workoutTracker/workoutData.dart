@@ -42,7 +42,8 @@ class WorkoutData extends ChangeNotifier {
     )
   ];
 
-  // Initialise workoutlist by reading from db
+
+  // Initialise workout list by reading from db
   void initialiseWorkoutList() {
     workoutList = db.getWorkoutListFromDb();
   }
@@ -52,43 +53,12 @@ class WorkoutData extends ChangeNotifier {
     return workoutList;
   }
 
-  // get length of given workout
-  int numberOfExercises(String workoutName) {
-    return getRelevantWorkout(workoutName).exercises.length;
-  }
-
-  // get number of sets in an exercise
-  int numberOfSets(String workoutName, String exerciseName) {
-    return getRelevantExercise(workoutName, exerciseName).sets.length;
-  }
-
-  // add a workout
-  void addWorkout(String name) {
+  // add a workout to workout list
+  void addWorkout(Workout workout) {
     // add a new workout with a blank list of exercises
-    workoutList.add(Workout(name: name, exercises: []));
+    workoutList.add(workout);
 
     notifyListeners();
-  }
-
-  // add an exercise
-  void addExercise(String workoutName, String exerciseName) {
-    getRelevantWorkout(workoutName).exercises
-        .add(Exercise(
-        name: exerciseName,
-        sets: []
-       )
-    );
-
-    notifyListeners();
-  }
-
-  // add a set
-  void addSet(String workoutName, String exerciseName, double weight, int reps) {
-    getRelevantExercise(workoutName, exerciseName).sets.add(Set(
-      weight: weight,
-      reps: reps,
-      index: numberOfSets(workoutName, exerciseName) + 1
-    ));
   }
 
   // check off set

@@ -9,6 +9,16 @@ class Workout {
     required this.exercises,
   });
 
+  // add empty exercise
+  void addExercise(Exercise exercise) {
+    exercises.add(exercise);
+  }
+
+  // get length of given workout
+  int numberOfExercises() {
+    return exercises.length;
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "name": name,

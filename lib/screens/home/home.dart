@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/services/authservice.dart';
-import '../workoutTracker/workoutHistory.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
 
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   State<Home> createState() => _HomeState();
 }
@@ -28,12 +29,12 @@ class _HomeState extends State<Home> {
     return Scaffold(
         backgroundColor:Colors.purple[200],
         appBar: AppBar(
-          title: Text('Home Page'),
+          title: const Text('Home Page'),
           backgroundColor: Colors.white,
           elevation: 0.0,
           actions: <Widget>[TextButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('logout'),
+            icon: const Icon(Icons.person),
+            label: const Text('logout'),
             onPressed: () async {
               await _auth.signOut();
             },
@@ -48,8 +49,8 @@ class _HomeState extends State<Home> {
               final userData = snapshot.data!.data() as Map<String,dynamic>;
               return ListView(
                   children: [
-                  SizedBox(height: 50),
-                  Icon(
+                  const SizedBox(height: 50),
+                  const Icon(
                     Icons.person,
                     size: 72,
                   ),
@@ -70,7 +71,7 @@ class _HomeState extends State<Home> {
                   child: Text("Error + ${snapshot.error.toString()}")
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text("Error"),
               );
             }
@@ -90,10 +91,10 @@ class _HomeState extends State<Home> {
           ),
           content: TextField(
             autofocus:true,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: TextStyle(color: Colors.grey),
+              hintStyle: const TextStyle(color: Colors.grey),
             ),
             onChanged: (value) {
               newVal = value;
@@ -102,17 +103,17 @@ class _HomeState extends State<Home> {
           actions: [
             // cancel Button
             TextButton(onPressed: ()=> Navigator.pop(context),
-                child:Text ("Cancel",style: TextStyle(color: Colors.white)
+                child:const Text ("Cancel",style: TextStyle(color: Colors.white)
                 )
             ),
             TextButton(onPressed: () => Navigator.of(context).pop(newVal),
-                child: Text("Save", style: TextStyle(color: Colors.white)
+                child: const Text("Save", style: TextStyle(color: Colors.white)
                 )
             )
           ],
         )
     );
-    if (newVal.trim().length > 0) {
+    if (newVal.trim().isNotEmpty) {
       await userProfiles.doc(_auth.getUid()).update({field: newVal});
     }
   }
