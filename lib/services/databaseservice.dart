@@ -1,5 +1,10 @@
+import "dart:typed_data";
+import "../models/gbuser.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/screens/workoutTracker/workout.dart";
+import "package:gymbros/services/databaseStorageService.dart";
+import "package:uuid/uuid.dart";
+import "../models/post.dart";
 import "../screens/workoutTracker/exercise.dart";
 import "../screens/workoutTracker/set.dart";
 import  "package:gymbros/models/gbprofile.dart";
@@ -7,6 +12,7 @@ import  "package:gymbros/models/gbprofile.dart";
 
 class DatabaseService {
   final String uid;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   DatabaseService({required this.uid});
 
@@ -29,6 +35,12 @@ class DatabaseService {
     return profileSnap.docs.map((doc){
       return GbProfile(name: doc.get("name"));
     }).toList();
+  }
+
+  //get user profile details
+  Future<GbProfile> getUserDetails() async{
+    final userData = await userProfiles.doc(uid).get() ;
+    return GbProfile.fromSnap(userData);
   }
 
   // write workout data into workouts sub collection
@@ -90,5 +102,32 @@ class DatabaseService {
       }
     });
     return workoutList;
+  }
+
+  Future<String> uploadPost(String description, Uint8List file, String uid,
+      String username /*String profImage*/) async {
+    // asking uid here because we dont want to make extra calls to firebase auth when we can just get from our state management
+    String res = "Some error occurred";
+    try {
+      String photoUrl =
+      await dbStorageMethods().uploadImageToStorage('posts', file, true);
+      String postId = const Uuid().v1(); // creates unique id based on time
+      Post post = Post(
+        description: description,
+        uid: uid,
+        username: username,
+        likes: [],
+        postId: postId,
+        datePublished: DateTime.now(),
+        postUrl: photoUrl,
+        //profImage: profImage,
+      );
+      _firestore.collection('posts').doc(postId).set(post.toJson());
+      res = "success";
+      print("Post Uploaded!");
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
   }
 }
