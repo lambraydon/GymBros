@@ -10,3 +10,6 @@ const textInputDecoration = InputDecoration(
         borderSide: BorderSide(color: Color(0xff6deb4d), width: 2.0)
     )
 );
+
+const backgroundColor = Color.fromRGBO(224, 224, 224, 1);
+const appBarColor = Color.fromRGBO(98, 84, 138, 1);
