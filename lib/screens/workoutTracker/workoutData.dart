@@ -61,6 +61,11 @@ class WorkoutData extends ChangeNotifier {
     notifyListeners();
   }
 
+  // delete workout from workout list
+  void removeWorkoutFromList(int index) {
+    workoutList.removeAt(index);
+  }
+
   // check off set
   void checkOffSet(String workoutName, String exerciseName, int index) {
     Set relevantSet = getRelevantSet(workoutName, exerciseName, index);

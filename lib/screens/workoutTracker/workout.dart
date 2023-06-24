@@ -3,6 +3,7 @@ import 'exercise.dart';
 class Workout {
   final String name;
   final List<Exercise> exercises;
+  String workoutId = 'not set';
 
   Workout({
     required this.name,
@@ -17,6 +18,11 @@ class Workout {
   // get length of given workout
   int numberOfExercises() {
     return exercises.length;
+  }
+
+  // update workout ID
+  void setWorkoutId(String workoutId) {
+    this.workoutId = workoutId;
   }
 
   Map<String, dynamic> toJson() {

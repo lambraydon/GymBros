@@ -2,8 +2,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/screens/workoutTracker/workout.dart";
 import "../screens/workoutTracker/exercise.dart";
 import "../screens/workoutTracker/set.dart";
-import  "package:gymbros/models/gbprofile.dart";
-
+import "package:gymbros/models/gbprofile.dart";
 
 class DatabaseService {
   final String uid;
@@ -20,13 +19,12 @@ class DatabaseService {
   }
 
   //get profile Stream
-  Stream<List<GbProfile?>> get profiles{
-    return userProfiles.snapshots()
-    .map(_gbProfileListFromSnapshot);
+  Stream<List<GbProfile?>> get profiles {
+    return userProfiles.snapshots().map(_gbProfileListFromSnapshot);
   }
 
   List<GbProfile?> _gbProfileListFromSnapshot(QuerySnapshot profileSnap) {
-    return profileSnap.docs.map((doc){
+    return profileSnap.docs.map((doc) {
       return GbProfile(name: doc.get("name"));
     }).toList();
   }
@@ -35,13 +33,24 @@ class DatabaseService {
   void saveWorkoutToDb(Workout workout) async {
     DocumentReference workoutRef =
         userProfiles.doc(uid).collection("workouts").doc();
+
+    // initialise workout id in workout object
+    workout.setWorkoutId(workoutRef.id);
     await workoutRef.set(workout.toJson());
+  }
+
+  void deleteWorkoutFromDb(Workout workout) async {
+    await userProfiles
+        .doc(uid)
+        .collection("workouts")
+        .doc(workout.workoutId)
+        .delete();
   }
 
   // read workout data from db and convert it from json to workout object
   Future<Workout?> getWorkoutFromDb(String workoutId) async {
     DocumentSnapshot workoutSnapshot =
-    await userProfiles.doc(uid).collection("workouts").doc(workoutId).get();
+        await userProfiles.doc(uid).collection("workouts").doc(workoutId).get();
 
     if (workoutSnapshot.exists) {
       Workout workout = Workout(
@@ -54,17 +63,15 @@ class DatabaseService {
 
       exercisesData.forEach((exerciseData) {
         Exercise exercise = Exercise(
-          name: exerciseData['name'],
-          // sets list
-          sets: []
-        );
+            name: exerciseData['name'],
+            // sets list
+            sets: []);
 
         exerciseData['sets'].forEach((setData) {
           Set set = Set(
-            index: setData['index'],
-            weight: setData['weight'],
-            reps: setData['reps']
-          );
+              index: setData['index'],
+              weight: setData['weight'],
+              reps: setData['reps']);
           // write sets into exercises list
           exercise.sets.add(set);
         });
@@ -81,7 +88,11 @@ class DatabaseService {
   // convert workouts collection into a list of workout objects
   List<Workout> getWorkoutListFromDb() {
     List<Workout> workoutList = [];
-    userProfiles.doc(uid).collection("workouts").get().then((querySnapshot) async {
+    userProfiles
+        .doc(uid)
+        .collection("workouts")
+        .get()
+        .then((querySnapshot) async {
       for (var docSnapshot in querySnapshot.docs) {
         Workout? workout = await getWorkoutFromDb(docSnapshot.id);
         if (workout != null) {

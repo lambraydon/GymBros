@@ -7,6 +7,7 @@ import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
+import '../../shared/constants.dart';
 
 class Logger extends StatefulWidget {
   final Workout workout;
@@ -178,9 +179,9 @@ class _LoggerState extends State<Logger> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: backgroundColor,
           elevation: 0.0,
           actions: <Widget>[
             TextButton.icon(

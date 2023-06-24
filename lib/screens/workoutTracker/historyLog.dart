@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/shared/constants.dart';
 import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
@@ -178,9 +179,9 @@ class _HistoryLog extends State<HistoryLog> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: backgroundColor,
           elevation: 0.0,
           actions: <Widget>[
             IconButton(
@@ -188,7 +189,7 @@ class _HistoryLog extends State<HistoryLog> {
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.cancel_presentation_outlined),
-              color: Colors.blue,
+              color: appBarColor
             ),
           ],
         ),
