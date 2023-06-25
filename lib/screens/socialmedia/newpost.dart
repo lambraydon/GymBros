@@ -1,13 +1,10 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gymbros/models/gbprofile.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/services/userprovider.dart';
 import 'package:gymbros/shared/imageUtil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 class NewPost extends StatefulWidget {
   const NewPost({Key? key}) : super(key: key);

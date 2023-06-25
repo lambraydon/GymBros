@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:gymbros/screens/home/home.dart';
 import 'package:gymbros/screens/socialmedia/feed.dart';
-import 'package:gymbros/screens/socialmedia/newpost.dart';
 import 'package:gymbros/screens/workoutTracker/workoutHistory.dart';
-import 'package:gymbros/services/userprovider.dart';
-import 'package:provider/provider.dart';
+
 
 class PageToggler extends StatefulWidget {
   const PageToggler({super.key});
