@@ -2,11 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/shared/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
 
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   State<Home> createState() => _HomeState();
 }
@@ -26,7 +29,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[200],
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text('Home Page'),
         backgroundColor: Colors.white,
@@ -76,6 +79,8 @@ class _HomeState extends State<Home> {
           }
         },
       ),
+=======
+      
     );
   }
 
@@ -121,3 +126,4 @@ class _HomeState extends State<Home> {
     }
   }
 }
+

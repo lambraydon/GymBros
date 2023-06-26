@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/workoutTracker/historyLog.dart';
 import 'package:gymbros/screens/workoutTracker/logger.dart';
+import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:provider/provider.dart';
+import 'package:gymbros/screens/components/workoutTile.dart';
+import '../../shared/constants.dart';
+import '../../services/authservice.dart';
+import '../../services/databaseservice.dart';
 
 class WorkoutHistory extends StatefulWidget {
+  const WorkoutHistory({super.key});
+
   @override
   State<WorkoutHistory> createState() => _WorkoutHistoryState();
 }
@@ -11,52 +19,64 @@ class WorkoutHistory extends StatefulWidget {
 class _WorkoutHistoryState extends State<WorkoutHistory> {
   // text controller
   final newWorkoutNameController = TextEditingController();
+  final DatabaseService db = DatabaseService(uid: AuthService().getUid());
 
   // create new workout
   void createNewWorkout() {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Create new workout"),
-          content: TextField(
-            controller: newWorkoutNameController,
-        ),
-        actions: [
-          // save button
-          MaterialButton(
-            onPressed: save,
-            child: const Text("save"),
-          ),
-          // cancel button
-          MaterialButton(
-            onPressed: cancel,
-            child: const Text("cancel"),
-          )
-        ],
-        )
-    );
+              title: const Text("Create new workout"),
+              content: TextField(
+                controller: newWorkoutNameController,
+              ),
+              actions: [
+                // save button
+                MaterialButton(
+                  onPressed: save,
+                  child: const Text("save"),
+                ),
+                // cancel button
+                MaterialButton(
+                  onPressed: cancel,
+                  child: const Text("cancel"),
+                )
+              ],
+            ));
   }
 
   // Redirect to Logger
-  void goToLogger(String workoutName) {
+  void goToLogger(Workout workout) {
     Navigator.push(
-        context, 
+        context,
         MaterialPageRoute(
             builder: (context) => Logger(
-              workoutName: workoutName,
-            )
-        ));
+                  workout: workout,
+                )));
+  }
+
+  // Redirect to HistoryLog
+  void goToHistoryLog(Workout workout) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HistoryLog(
+                  workout: workout,
+                )));
   }
 
   // save workout name
   void save() {
     String newWorkoutName = newWorkoutNameController.text;
-    // add workout to workout list
-    Provider.of<WorkoutData>(context, listen: false).addWorkout(newWorkoutName);
+    // create new empty workout
+    Workout workout = Workout(name: newWorkoutName, exercises: []);
 
     // pop dialog box
     Navigator.pop(context);
     clear();
+
+    // go to Logger
+    goToLogger(workout);
   }
 
   // cancel workout
@@ -76,26 +96,31 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
+          backgroundColor: appBarColor,
           title: const Text('Workout History'),
         ),
-        backgroundColor: Colors.purple[50],
+        backgroundColor: backgroundColor,
         floatingActionButton: FloatingActionButton(
-          onPressed: createNewWorkout,
-          child: const Icon(Icons.not_started_outlined)
-        ),
+            backgroundColor: appBarColor,
+            onPressed: createNewWorkout,
+            child: const Icon(Icons.not_started_outlined)),
         body: ListView.builder(
             itemCount: value.getWorkoutList().length,
-            itemBuilder: (context, index) => ListTile(
-              title: Text(value.getWorkoutList()[index].name),
-              trailing: IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded),
-                onPressed: () =>
-                    goToLogger(value.getWorkoutList()[index].name),
-              ),
-            )
-        ),
+            itemBuilder: (context, index) {
+              return WorkoutTile(
+                  workoutName: value.getWorkoutList()[index].name,
+                  editTapped: (context) =>
+                      goToHistoryLog(value.getWorkoutList()[index]),
+                  deleteTapped: (context) {
+                    // delete workout from DB
+                    db.deleteWorkoutFromDb(value.getWorkoutList()[index]);
+                    // delete workout from local list
+                    setState(() {
+                      value.removeWorkoutFromList(index);
+                    });
+                  });
+            }),
       ),
     );
   }
 }
-

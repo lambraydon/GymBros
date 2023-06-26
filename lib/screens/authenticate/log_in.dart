@@ -3,6 +3,8 @@ import 'package:gymbros/screens/authenticate/direct_login.dart';
 import 'package:gymbros/screens/authenticate/sign_in.dart';
 
 class LogIn extends StatefulWidget {
+  const LogIn({super.key});
+
 
   @override
   State<LogIn> createState() => _LogInState();
@@ -12,16 +14,17 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(30.0, 100.0, 30.0, 100.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Container(
+            const SizedBox(
               height: 116,
               width: 116,
-              child: const Image(
+              child: Image(
                 image: AssetImage('assets/logo.jpg'),
               ),
             ),
