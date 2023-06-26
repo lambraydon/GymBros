@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       StreamProvider<GbUser?>.value(
         value: AuthService().user,
         initialData: null),
-      ChangeNotifierProvider(create: (context) => WorkoutData()),
+      ChangeNotifierProvider(create: (context) => WorkoutData())
     ],
         child: const MaterialApp(
           home: Wrapper(),
