@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 import 'package:flutter/material.dart';
+import 'package:gymbros/shared/constants.dart';
 import 'package:gymbros/shared/imageUtil.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -116,83 +117,77 @@ class _NewPostState extends State<NewPost> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[200],
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {}),
+        backgroundColor: appBarColor,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
         title: const Text("Share Workout"),
         centerTitle: false,
-        actions: [
-          TextButton(
-              onPressed: () => {},
-              child: const Text(
-                "Post",
-                style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ))
-        ],
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-          stream: db.userProfiles.doc(AuthService().getUid()).snapshots(),
-          builder: (context, snapshot) {
-            final userData = snapshot.data!.data() as Map<String,dynamic>;
-            return Column(children: [
-              isLoading
-                  ? const LinearProgressIndicator()
-                  : Padding(padding: EdgeInsets.only(top: 0)),
-              const Divider(),
-              Center(
-                  child: IconButton(
-                icon: Icon(Icons.upload),
-                onPressed: () => _selectimage(context),
-              )),
-              Row(
-                children: [
-                  const CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80'),
-                  ),
-                  SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: TextField(
-                        decoration: const InputDecoration(
-                          hintText: "Write a caption...",
-                          border: InputBorder.none,
-                        ),
-                        maxLines: 8,
-                      )),
-                  SizedBox(
-                      height: 45.0,
-                      width: 45.0,
-                      child: AspectRatio(
-                          aspectRatio: 487 / 451,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      alignment: FractionalOffset.topCenter,
-                                      image: NetworkImage(
-                                          'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')
-                                      //MemoryImage(_file!)
-                                      ))))),
-                ],
-              ),
-              const Divider(),
-              Center(
-                  child: TextButton(
-                    onPressed: () => {postImage(db.uid, userData["Name"])},
-                    child: Text(
-                        "Post",
-                        style: TextStyle(
+      body: Container(
+        color: backgroundColor,
+        child: StreamBuilder<DocumentSnapshot>(
+            stream: db.userProfiles.doc(AuthService().getUid()).snapshots(),
+            builder: (context, snapshot) {
+              final userData = snapshot.data!.data() as Map<String, dynamic>;
+              return Column(children: [
+                isLoading
+                    ? const LinearProgressIndicator()
+                    : const Padding(padding: EdgeInsets.only(top: 0)),
+                const Divider(),
+                Center(
+                    child: IconButton(
+                  icon: const Icon(Icons.upload),
+                  onPressed: () => _selectimage(context),
+                )),
+                /*
+                Row(
+                  children: [
+                    const CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80'),
+                    ),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: "Write a caption...",
+                            border: InputBorder.none,
+                          ),
+                          maxLines: 8,
+                        )),
+                    SizedBox(
+                        height: 45.0,
+                        width: 45.0,
+                        child: AspectRatio(
+                            aspectRatio: 487 / 451,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        alignment: FractionalOffset.topCenter,
+                                        image: NetworkImage(
+                                            'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')
+                                        //MemoryImage(_file!)
+                                        ))))),
+                  ],
+                ),
+                */
+                const Divider(),
+                Center(
+                    child: TextButton(
+                  onPressed: () => {postImage(db.uid, userData["Name"])},
+                  child: const Text("Post",
+                      style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
-                          fontSize: 24
-                        )
-                    ),
-                  )
-              )
-            ]);
-          }),
+                          fontSize: 24)),
+                ))
+              ]);
+            }),
+      ),
     );
   }
 }

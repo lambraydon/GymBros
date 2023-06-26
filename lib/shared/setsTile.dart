@@ -19,7 +19,9 @@ class setsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[20],
+      padding: EdgeInsets.zero,
       child: ListTile(
+        contentPadding: EdgeInsets.zero,
         subtitle: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

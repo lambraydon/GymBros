@@ -41,29 +41,29 @@ class _HistoryLog extends State<HistoryLog> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text("Add a new exercise"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // exercise name
-                  TextField(
-                    controller: exerciseNameController,
-                  )
-                ],
-              ),
-              actions: [
-                // save button
-                MaterialButton(
-                  onPressed: saveExercise,
-                  child: const Text("save"),
-                ),
-                // cancel button
-                MaterialButton(
-                  onPressed: cancelExercise,
-                  child: const Text("cancel"),
-                )
-              ],
-            ));
+          title: const Text("Add a new exercise"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // exercise name
+              TextField(
+                  controller: exerciseNameController,
+                  decoration: textInputDecoration2("Exercise Name"))
+            ],
+          ),
+          actions: [
+            // save button
+            MaterialButton(
+              onPressed: saveExercise,
+              child: const Text("save"),
+            ),
+            // cancel button
+            MaterialButton(
+              onPressed: cancelExercise,
+              child: const Text("cancel"),
+            )
+          ],
+        ));
   }
 
   // save exercise name
@@ -103,41 +103,47 @@ class _HistoryLog extends State<HistoryLog> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text("Add Set"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // weight
-                  TextField(
-                      controller: weightController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ]),
-                  // reps
-                  TextField(
-                      controller: repsController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ])
+          title: const Text("Add Set"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // weight
+              TextField(
+                controller: weightController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
                 ],
+                decoration: textInputDecoration2("Weight"),
               ),
-              actions: [
-                // save button
-                MaterialButton(
-                  onPressed: () {
-                    saveSet(exercise);
-                  },
-                  child: const Text("save"),
-                ),
-                // cancel button
-                MaterialButton(
-                  onPressed: cancelSet,
-                  child: const Text("cancel"),
-                )
-              ],
-            ));
+              const SizedBox(
+                height: 16,
+              ),
+              // reps
+              TextField(
+                  controller: repsController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: textInputDecoration2("Reps"))
+            ],
+          ),
+          actions: [
+            // save button
+            MaterialButton(
+              onPressed: () {
+                saveSet(exercise);
+              },
+              child: const Text("save"),
+            ),
+            // cancel button
+            MaterialButton(
+              onPressed: cancelSet,
+              child: const Text("cancel"),
+            )
+          ],
+        ));
   }
 
   // save set
@@ -175,6 +181,7 @@ class _HistoryLog extends State<HistoryLog> {
     repsController.clear();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
@@ -194,10 +201,17 @@ class _HistoryLog extends State<HistoryLog> {
           ],
         ),
         body: ListView(
+          padding: const EdgeInsets.all(16.0),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           children: <Widget>[
-            Text(widget.workout.name),
+            Text(
+              widget.workout.name,
+              style: const TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(
               height: 64.0,
             ),
@@ -206,6 +220,7 @@ class _HistoryLog extends State<HistoryLog> {
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
                 initialItemCount: widget.workout.numberOfExercises(),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 itemBuilder: (context, index, animation) {
                   return SizeTransition(
                       key: UniqueKey(),

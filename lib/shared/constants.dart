@@ -11,5 +11,18 @@ const textInputDecoration = InputDecoration(
     )
 );
 
+InputDecoration textInputDecoration2(String input) {
+    return InputDecoration(
+        hintText: input,
+        fillColor: backgroundColor,
+        filled: true,
+        enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 2.0)
+        ),
+        focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: appBarColor, width: 2.0)
+        )
+    );
+}
 const backgroundColor = Color.fromRGBO(224, 224, 224, 1);
 const appBarColor = Color.fromRGBO(98, 84, 138, 1);

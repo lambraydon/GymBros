@@ -21,21 +21,21 @@ class PostView extends StatelessWidget {
                 .copyWith(right: 0),
             child: Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 16,
                   backgroundImage: NetworkImage(
                       'https://plus.unsplash.com/premium_photo-1679635697694-4ab045eb0af6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80'),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.only(left: 8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           snap["username"],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         )
@@ -112,7 +112,7 @@ class PostView extends StatelessWidget {
                 Text("${snap["likes"].length} likes"),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     top: 8
                   ),
                   child: RichText(
@@ -134,9 +134,9 @@ class PostView extends StatelessWidget {
                   onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
+                    child: const Text(
                         'View all 200 comments',
-                    style: const TextStyle(fontSize: 16, color: Colors.black38))
+                    style: TextStyle(fontSize: 16, color: Colors.black38))
                   ),
                 ),
                 Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymbros/screens/socialmedia/newpost.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
@@ -47,8 +48,8 @@ class _LoggerState extends State<Logger> {
                 children: <Widget>[
                   // exercise name
                   TextField(
-                    controller: exerciseNameController,
-                  )
+                      controller: exerciseNameController,
+                      decoration: textInputDecoration2("Exercise Name"))
                 ],
               ),
               actions: [
@@ -109,18 +110,24 @@ class _LoggerState extends State<Logger> {
                 children: <Widget>[
                   // weight
                   TextField(
-                      controller: weightController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ]),
+                    controller: weightController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    decoration: textInputDecoration2("Weight"),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
                   // reps
                   TextField(
                       controller: repsController,
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
-                      ])
+                      ],
+                      decoration: textInputDecoration2("Reps"))
                 ],
               ),
               actions: [
@@ -196,15 +203,25 @@ class _LoggerState extends State<Logger> {
                     .addWorkout(widget.workout);
 
                 Navigator.pop(context);
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const NewPost()));
               },
             ),
           ],
         ),
         body: ListView(
+          padding: const EdgeInsets.all(16.0),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           children: <Widget>[
-            Text(widget.workout.name),
+            Text(
+              widget.workout.name,
+              style: const TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(
               height: 64.0,
             ),
@@ -214,108 +231,120 @@ class _LoggerState extends State<Logger> {
                 physics: const ClampingScrollPhysics(),
                 initialItemCount: widget.workout.numberOfExercises(),
                 itemBuilder: (context, index, animation) {
-                  return SizeTransition(
-                      key: UniqueKey(),
-                      sizeFactor: animation,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              widget.workout.exercises[index].name,
-                              textAlign: TextAlign.left,
-                            ),
-                            const SizedBox(
-                              height: 16.0,
-                            ),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "Set",
-                                  style: TextStyle(fontWeight: FontWeight.w800),
-                                ),
-                                Text("Best Set",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
-                                Text("Weight (kg)",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
-                                Text("Reps",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
-                                Icon(Icons.check)
-                              ],
-                            ),
-                            AnimatedList(
-                                key: _listKeys[index],
-                                shrinkWrap: true,
-                                physics: const ClampingScrollPhysics(),
-                                initialItemCount:
-                                    widget.workout.exercises[index].sets.length,
-                                itemBuilder: (context, int num, animation) {
-                                  return SizeTransition(
-                                      key: UniqueKey(),
-                                      sizeFactor: animation,
-                                      child: setsTile(
-                                        weight: widget.workout.exercises[index]
-                                            .sets[num].weight,
-                                        reps: widget.workout.exercises[index]
-                                            .sets[num].reps,
-                                        index: widget.workout.exercises[index]
-                                            .sets[num].index,
-                                        isCompleted: widget
-                                            .workout
-                                            .exercises[index]
-                                            .sets[num]
-                                            .isCompleted,
-                                        onCheckBoxChanged: (val) =>
-                                            onCheckBoxChanged(
-                                          widget.workout.name,
-                                          widget.workout.exercises[index].name,
-                                          widget.workout.exercises[index]
-                                              .sets[num].index,
-                                        ),
-                                      ));
-                                }),
-                            ElevatedButton.icon(
-                                onPressed: () {
-                                  createNewSet(widget.workout.exercises[index]);
-                                },
-                                icon: const Icon(
-                                  Icons.add,
-                                ),
-                                label: const Text(
-                                  "Add Set",
-                                  style: TextStyle(
-                                    fontSize: 15.0,
+                  return Container(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: SizeTransition(
+                        key: UniqueKey(),
+                        sizeFactor: animation,
+                        child: Padding(
+                          padding: const EdgeInsets.all(0.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                widget.workout.exercises[index].name,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                    fontSize: 16.0,
                                     fontWeight: FontWeight.w500,
-                                  ),
+                                    color: appBarColor),
+                              ),
+                              const SizedBox(
+                                height: 16.0,
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      "Set",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.w800),
+                                    ),
+                                    Text("Best Set",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w800)),
+                                    Text("Weight (kg)",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w800)),
+                                    Text("Reps",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w800)),
+                                    Icon(Icons.check)
+                                  ],
                                 ),
-                                style: ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.white),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.grey),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                          side: const BorderSide(
-                                              color: Colors.grey))),
-                                  elevation:
-                                      MaterialStateProperty.all<double>(0),
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(400, 28)),
-                                )),
-                          ],
-                        ),
-                      ));
+                              ),
+                              AnimatedList(
+                                  key: _listKeys[index],
+                                  shrinkWrap: true,
+                                  physics: const ClampingScrollPhysics(),
+                                  initialItemCount:
+                                      widget.workout.exercises[index].sets.length,
+                                  itemBuilder: (context, int num, animation) {
+                                    return SizeTransition(
+                                        key: UniqueKey(),
+                                        sizeFactor: animation,
+                                        child: setsTile(
+                                          weight: widget.workout.exercises[index]
+                                              .sets[num].weight,
+                                          reps: widget.workout.exercises[index]
+                                              .sets[num].reps,
+                                          index: widget.workout.exercises[index]
+                                              .sets[num].index,
+                                          isCompleted: widget
+                                              .workout
+                                              .exercises[index]
+                                              .sets[num]
+                                              .isCompleted,
+                                          onCheckBoxChanged: (val) =>
+                                              onCheckBoxChanged(
+                                            widget.workout.name,
+                                            widget.workout.exercises[index].name,
+                                            widget.workout.exercises[index]
+                                                .sets[num].index,
+                                          ),
+                                        ));
+                                  }),
+                              ElevatedButton.icon(
+                                  onPressed: () {
+                                    createNewSet(widget.workout.exercises[index]);
+                                  },
+                                  icon: const Icon(
+                                    Icons.add,
+                                  ),
+                                  label: const Text(
+                                    "Add Set",
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  style: ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.white),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.grey),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                            side: const BorderSide(
+                                                color: Colors.grey))),
+                                    elevation:
+                                        MaterialStateProperty.all<double>(0),
+                                    minimumSize: MaterialStateProperty.all<Size>(
+                                        const Size(400, 28)),
+                                  )),
+                            ],
+                          ),
+                        )),
+                  );
                 }),
             const SizedBox(
               height: 64,
