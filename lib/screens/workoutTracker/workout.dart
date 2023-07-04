@@ -31,4 +31,8 @@ class Workout {
       "exercises": exercises.map((exercise) => exercise.toJson()).toList()
     };
   }
+
+  List<String> workoutSummary() {
+    return exercises.map((exercise) => exercise.toString()).toList();
+  }
 }

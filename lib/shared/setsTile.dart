@@ -41,10 +41,13 @@ class setsTile extends StatelessWidget {
               label: Text(reps.toString()),
             )
           ],
-        ), trailing: Checkbox(
-        value: isCompleted,
-        onChanged: (value) => onCheckBoxChanged!(value),
-      ),
+        ),
+        trailing: Checkbox(
+          value: isCompleted,
+          onChanged: (value) {
+            onCheckBoxChanged!(value);
+          },
+        ),
       ),
     );
   }

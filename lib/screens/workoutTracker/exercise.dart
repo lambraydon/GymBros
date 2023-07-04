@@ -25,7 +25,37 @@ class Exercise {
     return sets.length;
   }
 
+  // Find best set by iterating over whole list of sets
+  Set bestSet() {
+    Set best = sets[0];
+    for (int i = 0; i < sets.length; i++) {
+      if (sets[i].volume() > best.volume()) {
+        best = sets[i];
+      }
+    }
+    return best;
+  }
+
   Map<String, dynamic> toJson() {
     return {"name": name, "sets": sets.map((set) => set.toJson()).toList()};
+  }
+
+  @override
+  String toString() {
+    String exerciseName =  "${sets.length} × $name";
+    String newExerciseName = "";
+    int lenExercise = exerciseName.length;
+    int maxLength = 24;
+
+    if (lenExercise > maxLength) {
+      for (int i = 0; i < maxLength - 3; i++) {
+        newExerciseName += exerciseName[i];
+      }
+      newExerciseName += "...";
+    } else {
+      newExerciseName = exerciseName;
+    }
+
+    return newExerciseName;
   }
 }

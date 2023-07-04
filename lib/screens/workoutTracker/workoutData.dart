@@ -67,9 +67,8 @@ class WorkoutData extends ChangeNotifier {
   }
 
   // check off set
-  void checkOffSet(String workoutName, String exerciseName, int index) {
-    Set relevantSet = getRelevantSet(workoutName, exerciseName, index);
-    relevantSet.isCompleted = !relevantSet.isCompleted;
+  void checkOffSet(Set set) {
+    set.isCompleted = !set.isCompleted;
 
     notifyListeners();
   }

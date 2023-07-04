@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../workoutTracker/workout.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class WorkoutTile extends StatelessWidget {
-  final String workoutName;
+  final Workout workout;
   final Function(BuildContext)? editTapped;
   final Function(BuildContext)? deleteTapped;
 
   const WorkoutTile({
     super.key,
-    required this.workoutName,
+    required this.workout,
     required this.editTapped,
     required this.deleteTapped,
   });
@@ -44,10 +46,68 @@ class WorkoutTile extends StatelessWidget {
             color: Colors.grey[100],
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // workout name
-              Text(workoutName),
+              AutoSizeText(
+                workout.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+              ),
+              const Row(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.bar_chart),
+                      AutoSizeText(" 30 kg")
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+              ),
+              const Row(
+                children: [
+                  AutoSizeText(
+                    "Exercise",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    width: 120,
+                  ),
+                  AutoSizeText(
+                    "Best Set",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+              ),
+              ListView.builder(
+                itemCount: workout.workoutSummary().length,
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Row(
+                    children: [
+                      SizedBox(
+                        width: 173,
+                        child:
+                            AutoSizeText(workout.workoutSummary()[index]),
+                      ),
+                      AutoSizeText(
+                          workout.exercises[index].bestSet().toString()),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ),

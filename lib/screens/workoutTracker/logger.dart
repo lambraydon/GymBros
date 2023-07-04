@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gymbros/screens/socialmedia/newpost.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
+import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
+import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
@@ -27,9 +28,9 @@ class _LoggerState extends State<Logger> {
       List.generate(100, (index) => GlobalKey());
 
   // Checkbox was tapped
-  void onCheckBoxChanged(String workoutName, String exerciseName, int index) {
+  void onCheckBoxChanged(Set set) {
     Provider.of<WorkoutData>(context, listen: false)
-        .checkOffSet(workoutName, exerciseName, index);
+        .checkOffSet(set);
   }
 
   // text controllers
@@ -182,6 +183,16 @@ class _LoggerState extends State<Logger> {
     repsController.clear();
   }
 
+  // Redirect to Completed workout page
+  void goToWorkoutComplete(Workout workout) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WorkoutComplete(
+              workout: workout,
+            )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
@@ -204,8 +215,7 @@ class _LoggerState extends State<Logger> {
 
                 Navigator.pop(context);
 
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const NewPost()));
+                goToWorkoutComplete(widget.workout);
               },
             ),
           ],
@@ -261,8 +271,8 @@ class _LoggerState extends State<Logger> {
                                   children: <Widget>[
                                     Text(
                                       "Set",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.w800),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
                                     ),
                                     Text("Best Set",
                                         style: TextStyle(
@@ -281,15 +291,18 @@ class _LoggerState extends State<Logger> {
                                   key: _listKeys[index],
                                   shrinkWrap: true,
                                   physics: const ClampingScrollPhysics(),
-                                  initialItemCount:
-                                      widget.workout.exercises[index].sets.length,
+                                  initialItemCount: widget
+                                      .workout.exercises[index].sets.length,
                                   itemBuilder: (context, int num, animation) {
                                     return SizeTransition(
                                         key: UniqueKey(),
                                         sizeFactor: animation,
                                         child: setsTile(
-                                          weight: widget.workout.exercises[index]
-                                              .sets[num].weight,
+                                          weight: widget
+                                              .workout
+                                              .exercises[index]
+                                              .sets[num]
+                                              .weight,
                                           reps: widget.workout.exercises[index]
                                               .sets[num].reps,
                                           index: widget.workout.exercises[index]
@@ -301,16 +314,17 @@ class _LoggerState extends State<Logger> {
                                               .isCompleted,
                                           onCheckBoxChanged: (val) =>
                                               onCheckBoxChanged(
-                                            widget.workout.name,
-                                            widget.workout.exercises[index].name,
-                                            widget.workout.exercises[index]
-                                                .sets[num].index,
+                                                  widget
+                                                      .workout
+                                                      .exercises[index]
+                                                      .sets[num]
                                           ),
                                         ));
                                   }),
                               ElevatedButton.icon(
                                   onPressed: () {
-                                    createNewSet(widget.workout.exercises[index]);
+                                    createNewSet(
+                                        widget.workout.exercises[index]);
                                   },
                                   icon: const Icon(
                                     Icons.add,
@@ -338,8 +352,9 @@ class _LoggerState extends State<Logger> {
                                                 color: Colors.grey))),
                                     elevation:
                                         MaterialStateProperty.all<double>(0),
-                                    minimumSize: MaterialStateProperty.all<Size>(
-                                        const Size(400, 28)),
+                                    minimumSize:
+                                        MaterialStateProperty.all<Size>(
+                                            const Size(400, 28)),
                                   )),
                             ],
                           ),

@@ -108,7 +108,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
             itemCount: value.getWorkoutList().length,
             itemBuilder: (context, index) {
               return WorkoutTile(
-                  workoutName: value.getWorkoutList()[index].name,
+                  workout: value.getWorkoutList()[index],
                   editTapped: (context) =>
                       goToHistoryLog(value.getWorkoutList()[index]),
                   deleteTapped: (context) {
