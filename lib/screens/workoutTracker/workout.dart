@@ -1,9 +1,12 @@
 import 'exercise.dart';
+import 'package:intl/intl.dart';
 
 class Workout {
   final String name;
   final List<Exercise> exercises;
   String workoutId = 'not set';
+  DateTime start = DateTime.now();
+
 
   Workout({
     required this.name,
@@ -25,14 +28,25 @@ class Workout {
     this.workoutId = workoutId;
   }
 
+  // update workout ID
+  void setDateTime(DateTime day) {
+    start = day;
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "name": name,
+      "start": start,
       "exercises": exercises.map((exercise) => exercise.toJson()).toList()
     };
   }
 
   List<String> workoutSummary() {
     return exercises.map((exercise) => exercise.toString()).toList();
+  }
+
+  String formatDate() {
+    final formatter = DateFormat('dd MMM yyyy');
+    return formatter.format(start);
   }
 }

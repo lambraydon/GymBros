@@ -53,6 +53,7 @@ class WorkoutData extends ChangeNotifier {
     return workoutList;
   }
 
+
   // add a workout to workout list
   void addWorkout(Workout workout) {
     // add a new workout with a blank list of exercises
@@ -64,6 +65,8 @@ class WorkoutData extends ChangeNotifier {
   // delete workout from workout list
   void removeWorkoutFromList(int index) {
     workoutList.removeAt(index);
+
+    notifyListeners();
   }
 
   // check off set
@@ -71,32 +74,5 @@ class WorkoutData extends ChangeNotifier {
     set.isCompleted = !set.isCompleted;
 
     notifyListeners();
-  }
-
-  // return relevant workout object given workout name
-  Workout getRelevantWorkout(String workoutName) {
-    Workout relevantWorkout =
-      workoutList.firstWhere((workout) => workout.name == workoutName);
-
-    return relevantWorkout;
-  }
-
-  // return relevant exercise object given workout name and exercise name
-  Exercise getRelevantExercise(String workoutName, String exerciseName) {
-    Workout relevantWorkout = getRelevantWorkout(workoutName);
-
-    Exercise relevantExercise =
-        relevantWorkout.exercises.firstWhere((exercise) => exercise.name == exerciseName);
-
-    return relevantExercise;
-  }
-
-  Set getRelevantSet(String workoutName, String exerciseName, int index) {
-    Exercise relevantExercise = getRelevantExercise(workoutName, exerciseName);
-
-    Set relevantSet =
-        relevantExercise.sets.firstWhere((set) => set.index == index);
-
-    return relevantSet;
   }
 }

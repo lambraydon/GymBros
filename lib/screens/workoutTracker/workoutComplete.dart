@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
-import 'package:gymbros/screens/workoutTracker/workoutHistory.dart';
 import 'package:provider/provider.dart';
 import '../../services/authservice.dart';
 import '../../services/databaseservice.dart';
@@ -39,11 +38,6 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
                 )));
   }
 
-  // Redirect to workout History
-  void goToHistory() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const WorkoutHistory()));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +50,7 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
               const SizedBox(
                 height: 64.0,
               ),
-              TextButton(onPressed: goToHistory, child: const Text("Done")),
+              TextButton(onPressed: () {Navigator.pop(context);}, child: const Text("Done")),
               const SizedBox(
                 height: 128.0,
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/workoutTracker/calendar.dart';
 import 'package:gymbros/screens/workoutTracker/historyLog.dart';
 import 'package:gymbros/screens/workoutTracker/logger.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
@@ -43,6 +44,14 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                 )
               ],
             ));
+  }
+
+  // Redirect to Calendar
+  void goToCalendar(List<Workout> workoutList) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Calendar(workoutList: workoutList)));
   }
 
   // Redirect to Logger
@@ -96,9 +105,14 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
-          backgroundColor: appBarColor,
-          title: const Text('Workout History'),
-        ),
+            backgroundColor: appBarColor,
+            title: const Text('Workout History'),
+            actions: [
+              IconButton(
+                onPressed: () => goToCalendar(value.getWorkoutList()),
+                icon: const Icon(Icons.calendar_month_outlined),
+              )
+            ]),
         backgroundColor: backgroundColor,
         floatingActionButton: FloatingActionButton(
             backgroundColor: appBarColor,

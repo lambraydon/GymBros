@@ -1,5 +1,4 @@
 import "dart:typed_data";
-import "../models/gbuser.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/screens/workoutTracker/workout.dart";
 import "package:gymbros/services/databaseStorageService.dart";
@@ -70,6 +69,9 @@ class DatabaseService {
         // exercise list
         exercises: [],
       );
+
+      // update DateTime
+      workout.setDateTime(workoutSnapshot['start'].toDate());
 
       List<dynamic> exercisesData = workoutSnapshot['exercises'];
 

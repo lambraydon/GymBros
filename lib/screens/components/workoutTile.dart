@@ -54,23 +54,30 @@ class WorkoutTile extends StatelessWidget {
                 workout.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.w800,
+                  fontSize: 16.0
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 4),
+              ),
+              AutoSizeText(
+                workout.formatDate()
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 2),
               ),
               const Row(
                 children: [
                   Row(
                     children: [
                       Icon(Icons.bar_chart),
-                      AutoSizeText(" 30 kg")
+                      AutoSizeText(" 30 kg"),
                     ],
                   ),
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.symmetric(vertical: 3),
               ),
               const Row(
                 children: [
