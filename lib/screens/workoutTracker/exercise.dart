@@ -4,11 +4,14 @@ class Exercise {
   final String name;
   final List<Set> sets;
   bool isCompleted;
+  bool isRestTimer;
+  int restTime = 90;
 
   Exercise({
     required this.name,
     required this.sets,
     this.isCompleted = false,
+    this.isRestTimer = false
   });
 
   // add a set

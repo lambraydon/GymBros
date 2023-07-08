@@ -75,4 +75,11 @@ class WorkoutData extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  // check off set
+  void checkOffTimer(Exercise exercise) {
+    exercise.isRestTimer = !exercise.isRestTimer;
+
+    notifyListeners();
+  }
 }

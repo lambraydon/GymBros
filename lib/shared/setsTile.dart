@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/workoutTracker/set.dart';
 
-class setsTile extends StatelessWidget {
-  final int index;
-  final double weight;
-  final int reps;
-  final bool isCompleted;
+class SetsTile extends StatelessWidget {
+  final Set set;
   void Function(bool?)? onCheckBoxChanged;
 
-  setsTile(
+  SetsTile(
       {super.key,
-      required this.weight,
-      required this.reps,
-      required this.index,
-      required this.isCompleted,
+      required this.set,
       required this.onCheckBoxChanged});
 
   @override
@@ -27,7 +22,7 @@ class setsTile extends StatelessWidget {
           children: <Widget>[
             Chip(
               label: Text(
-                index.toString(),
+                set.index.toString(),
               ),
             ),
             const Chip(
@@ -35,15 +30,15 @@ class setsTile extends StatelessWidget {
             ),
             Chip(
                 label: Text(
-              weight.toString(),
+              set.weight.toString(),
             )),
             Chip(
-              label: Text(reps.toString()),
+              label: Text(set.reps.toString()),
             )
           ],
         ),
         trailing: Checkbox(
-          value: isCompleted,
+          value: set.isCompleted,
           onChanged: (value) {
             onCheckBoxChanged!(value);
           },

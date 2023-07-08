@@ -48,6 +48,8 @@ dependencies:
   auto_size_text: ^3.0.0
   confetti: ^0.7.0
   table_calendar: ^3.0.9
+  percent_indicator: ^4.2.3
+
   
 dev_dependencies:
   flutter_test:

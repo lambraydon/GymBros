@@ -5,6 +5,8 @@ import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/shared/restTimer.dart';
+import 'package:gymbros/shared/restTimerDialog.dart';
 import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
@@ -29,8 +31,12 @@ class _LoggerState extends State<Logger> {
 
   // Checkbox was tapped
   void onCheckBoxChanged(Set set) {
-    Provider.of<WorkoutData>(context, listen: false)
-        .checkOffSet(set);
+    Provider.of<WorkoutData>(context, listen: false).checkOffSet(set);
+  }
+
+  // Timer was enabled
+  void onSwitchChanged(Exercise exercise) {
+    Provider.of<WorkoutData>(context, listen: false).checkOffTimer(exercise);
   }
 
   // text controllers
@@ -189,8 +195,29 @@ class _LoggerState extends State<Logger> {
         context,
         MaterialPageRoute(
             builder: (context) => WorkoutComplete(
-              workout: workout,
-            )));
+                  workout: workout,
+                )));
+  }
+
+  void timerDialog(Exercise exercise) {
+    showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return RestTimerDialog(
+                  exercise: exercise,
+                  onSwitchChange: (val) => setState(() {
+                        exercise.isRestTimer = !exercise.isRestTimer;
+                      }));
+            }));
+  }
+
+  void restTimerViewer(Exercise exercise) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return RestTimer(totalTime: exercise.restTime);
+        });
   }
 
   @override
@@ -251,13 +278,26 @@ class _LoggerState extends State<Logger> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                widget.workout.exercises[index].name,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: appBarColor),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    widget.workout.exercises[index].name,
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: appBarColor),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        timerDialog(
+                                            widget.workout.exercises[index]);
+                                      },
+                                      icon: const Icon(
+                                          Icons.access_time_outlined)),
+                                ],
                               ),
                               const SizedBox(
                                 height: 16.0,
@@ -297,28 +337,21 @@ class _LoggerState extends State<Logger> {
                                     return SizeTransition(
                                         key: UniqueKey(),
                                         sizeFactor: animation,
-                                        child: setsTile(
-                                          weight: widget
-                                              .workout
-                                              .exercises[index]
-                                              .sets[num]
-                                              .weight,
-                                          reps: widget.workout.exercises[index]
-                                              .sets[num].reps,
-                                          index: widget.workout.exercises[index]
-                                              .sets[num].index,
-                                          isCompleted: widget
-                                              .workout
-                                              .exercises[index]
-                                              .sets[num]
-                                              .isCompleted,
-                                          onCheckBoxChanged: (val) =>
-                                              onCheckBoxChanged(
-                                                  widget
-                                                      .workout
-                                                      .exercises[index]
-                                                      .sets[num]
-                                          ),
+                                        child: SetsTile(
+                                          set: widget.workout.exercises[index]
+                                              .sets[num],
+                                          onCheckBoxChanged: (val) {
+                                            if (val == true &&
+                                                widget.workout.exercises[index]
+                                                    .isRestTimer) {
+                                              restTimerViewer(widget
+                                                  .workout.exercises[index]);
+                                            }
+                                            return onCheckBoxChanged(widget
+                                                .workout
+                                                .exercises[index]
+                                                .sets[num]);
+                                          },
                                         ));
                                   }),
                               ElevatedButton.icon(
