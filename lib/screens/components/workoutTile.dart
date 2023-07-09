@@ -53,27 +53,38 @@ class WorkoutTile extends StatelessWidget {
               AutoSizeText(
                 workout.name,
                 style: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16.0
-                ),
+                    fontWeight: FontWeight.w800, fontSize: 16.0),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
               ),
-              AutoSizeText(
-                workout.formatDate()
-              ),
+              AutoSizeText(workout.formatDate()),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 2),
               ),
-              const Row(
+              Row(
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.bar_chart),
-                      AutoSizeText(" 30 kg"),
+                      Icon(Icons.bar_chart, color: Colors.grey.shade600,),
+                      const AutoSizeText(" 30 kg"),
                     ],
                   ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Row(
+                    children: [
+                      Transform.scale(
+                        scale: 0.8,
+                        child: Icon(
+                          Icons.access_time_filled,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      AutoSizeText(" ${workout.formatWorkoutDuration()}")
+                    ],
+                  )
                 ],
               ),
               Container(
@@ -106,8 +117,7 @@ class WorkoutTile extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: 173,
-                        child:
-                            AutoSizeText(workout.workoutSummary()[index]),
+                        child: AutoSizeText(workout.workoutSummary()[index]),
                       ),
                       AutoSizeText(
                           workout.exercises[index].bestSet().toString()),

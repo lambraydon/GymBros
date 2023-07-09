@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
@@ -24,6 +26,13 @@ class Logger extends StatefulWidget {
 }
 
 class _LoggerState extends State<Logger> {
+
+  @override
+  void initState() {
+    startWorkoutTimer();
+    super.initState();
+  }
+
   //Global key for animated list
   final GlobalKey<AnimatedListState> _key1 = GlobalKey();
   final List<GlobalKey<AnimatedListState>> _listKeys =
@@ -220,6 +229,35 @@ class _LoggerState extends State<Logger> {
         });
   }
 
+  int workoutTimeInSec = 0;
+
+  void startWorkoutTimer() {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        workoutTimeInSec++;
+      });
+    });
+  }
+
+  String workoutTimeString() {
+    int sec = workoutTimeInSec % 60;
+    int min = workoutTimeInSec ~/ 60 % 60;
+    int hour = workoutTimeInSec ~/ 3600;
+
+    String secString = sec < 10 ? "0${sec.toString()}" : sec.toString();
+    String minString = min < 10 ? "0${min.toString()}" : min.toString();
+    String hourString = hour < 10 ? "0${hour.toString()}" : hour.toString();
+
+    if (hour == 0) {
+      if (min < 10) {
+        minString = min.toString();
+      }
+      return "$minString:$secString";
+    }
+
+    return "$hourString:$minString:$secString";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
@@ -233,6 +271,9 @@ class _LoggerState extends State<Logger> {
               icon: const Icon(Icons.save_alt_outlined),
               label: const Text('Finish'),
               onPressed: () {
+                // Store workoutTimeInSec in workout object
+                widget.workout.workoutDurationInSec = workoutTimeInSec;
+
                 // Save workout to DB
                 widget.db.saveWorkoutToDb(widget.workout);
 
@@ -260,7 +301,13 @@ class _LoggerState extends State<Logger> {
               ),
             ),
             const SizedBox(
-              height: 64.0,
+              height: 10,
+            ),
+            Text(
+              workoutTimeString(),
+            ),
+            const SizedBox(
+              height: 8.0,
             ),
             AnimatedList(
                 key: _key1,

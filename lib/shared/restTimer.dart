@@ -87,7 +87,7 @@ class _RestTimerState extends State<RestTimer> {
                     percent: percent,
                     radius: 130,
                     animateFromLastPercent: true,
-                    backgroundColor: Colors.grey,
+                    backgroundColor: Colors.grey.shade300,
                     progressColor: appBarColor,
                     circularStrokeCap: CircularStrokeCap.round,
                     center: Column(
@@ -120,13 +120,13 @@ class _RestTimerState extends State<RestTimer> {
                             modifyTime(-10);
                           },
                           buttonText: "-10s",
-                          color: Colors.grey),
+                          color: Colors.grey.shade400),
                       CustomTextButton(
                           onPressed: () {
                             modifyTime(10);
                           },
                           buttonText: "+10s",
-                          color: Colors.grey),
+                          color: Colors.grey.shade400),
                       CustomTextButton(
                           onPressed: () {
                             Navigator.pop(context);
