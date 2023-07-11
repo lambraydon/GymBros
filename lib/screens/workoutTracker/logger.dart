@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gymbros/screens/socialmedia/newpost.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
+import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
+import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/shared/restTimer.dart';
+import 'package:gymbros/shared/restTimerDialog.dart';
 import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
@@ -21,15 +26,26 @@ class Logger extends StatefulWidget {
 }
 
 class _LoggerState extends State<Logger> {
+
+  @override
+  void initState() {
+    startWorkoutTimer();
+    super.initState();
+  }
+
   //Global key for animated list
   final GlobalKey<AnimatedListState> _key1 = GlobalKey();
   final List<GlobalKey<AnimatedListState>> _listKeys =
       List.generate(100, (index) => GlobalKey());
 
   // Checkbox was tapped
-  void onCheckBoxChanged(String workoutName, String exerciseName, int index) {
-    Provider.of<WorkoutData>(context, listen: false)
-        .checkOffSet(workoutName, exerciseName, index);
+  void onCheckBoxChanged(Set set) {
+    Provider.of<WorkoutData>(context, listen: false).checkOffSet(set);
+  }
+
+  // Timer was enabled
+  void onSwitchChanged(Exercise exercise) {
+    Provider.of<WorkoutData>(context, listen: false).checkOffTimer(exercise);
   }
 
   // text controllers
@@ -182,6 +198,66 @@ class _LoggerState extends State<Logger> {
     repsController.clear();
   }
 
+  // Redirect to Completed workout page
+  void goToWorkoutComplete(Workout workout) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WorkoutComplete(
+                  workout: workout,
+                )));
+  }
+
+  void timerDialog(Exercise exercise) {
+    showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return RestTimerDialog(
+                  exercise: exercise,
+                  onSwitchChange: (val) => setState(() {
+                        exercise.isRestTimer = !exercise.isRestTimer;
+                      }));
+            }));
+  }
+
+  void restTimerViewer(Exercise exercise) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return RestTimer(totalTime: exercise.restTime);
+        });
+  }
+
+  int workoutTimeInSec = 0;
+
+  void startWorkoutTimer() {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        workoutTimeInSec++;
+      });
+    });
+  }
+
+  String workoutTimeString() {
+    int sec = workoutTimeInSec % 60;
+    int min = workoutTimeInSec ~/ 60 % 60;
+    int hour = workoutTimeInSec ~/ 3600;
+
+    String secString = sec < 10 ? "0${sec.toString()}" : sec.toString();
+    String minString = min < 10 ? "0${min.toString()}" : min.toString();
+    String hourString = hour < 10 ? "0${hour.toString()}" : hour.toString();
+
+    if (hour == 0) {
+      if (min < 10) {
+        minString = min.toString();
+      }
+      return "$minString:$secString";
+    }
+
+    return "$hourString:$minString:$secString";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
@@ -195,6 +271,9 @@ class _LoggerState extends State<Logger> {
               icon: const Icon(Icons.save_alt_outlined),
               label: const Text('Finish'),
               onPressed: () {
+                // Store workoutTimeInSec in workout object
+                widget.workout.workoutDurationInSec = workoutTimeInSec;
+
                 // Save workout to DB
                 widget.db.saveWorkoutToDb(widget.workout);
 
@@ -204,8 +283,7 @@ class _LoggerState extends State<Logger> {
 
                 Navigator.pop(context);
 
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const NewPost()));
+                goToWorkoutComplete(widget.workout);
               },
             ),
           ],
@@ -223,7 +301,13 @@ class _LoggerState extends State<Logger> {
               ),
             ),
             const SizedBox(
-              height: 64.0,
+              height: 10,
+            ),
+            Text(
+              workoutTimeString(),
+            ),
+            const SizedBox(
+              height: 8.0,
             ),
             AnimatedList(
                 key: _key1,
@@ -241,13 +325,26 @@ class _LoggerState extends State<Logger> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                widget.workout.exercises[index].name,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: appBarColor),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    widget.workout.exercises[index].name,
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: appBarColor),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        timerDialog(
+                                            widget.workout.exercises[index]);
+                                      },
+                                      icon: const Icon(
+                                          Icons.access_time_outlined)),
+                                ],
                               ),
                               const SizedBox(
                                 height: 16.0,
@@ -261,8 +358,8 @@ class _LoggerState extends State<Logger> {
                                   children: <Widget>[
                                     Text(
                                       "Set",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.w800),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
                                     ),
                                     Text("Best Set",
                                         style: TextStyle(
@@ -281,36 +378,33 @@ class _LoggerState extends State<Logger> {
                                   key: _listKeys[index],
                                   shrinkWrap: true,
                                   physics: const ClampingScrollPhysics(),
-                                  initialItemCount:
-                                      widget.workout.exercises[index].sets.length,
+                                  initialItemCount: widget
+                                      .workout.exercises[index].sets.length,
                                   itemBuilder: (context, int num, animation) {
                                     return SizeTransition(
                                         key: UniqueKey(),
                                         sizeFactor: animation,
-                                        child: setsTile(
-                                          weight: widget.workout.exercises[index]
-                                              .sets[num].weight,
-                                          reps: widget.workout.exercises[index]
-                                              .sets[num].reps,
-                                          index: widget.workout.exercises[index]
-                                              .sets[num].index,
-                                          isCompleted: widget
-                                              .workout
-                                              .exercises[index]
-                                              .sets[num]
-                                              .isCompleted,
-                                          onCheckBoxChanged: (val) =>
-                                              onCheckBoxChanged(
-                                            widget.workout.name,
-                                            widget.workout.exercises[index].name,
-                                            widget.workout.exercises[index]
-                                                .sets[num].index,
-                                          ),
+                                        child: SetsTile(
+                                          set: widget.workout.exercises[index]
+                                              .sets[num],
+                                          onCheckBoxChanged: (val) {
+                                            if (val == true &&
+                                                widget.workout.exercises[index]
+                                                    .isRestTimer) {
+                                              restTimerViewer(widget
+                                                  .workout.exercises[index]);
+                                            }
+                                            return onCheckBoxChanged(widget
+                                                .workout
+                                                .exercises[index]
+                                                .sets[num]);
+                                          },
                                         ));
                                   }),
                               ElevatedButton.icon(
                                   onPressed: () {
-                                    createNewSet(widget.workout.exercises[index]);
+                                    createNewSet(
+                                        widget.workout.exercises[index]);
                                   },
                                   icon: const Icon(
                                     Icons.add,
@@ -338,8 +432,9 @@ class _LoggerState extends State<Logger> {
                                                 color: Colors.grey))),
                                     elevation:
                                         MaterialStateProperty.all<double>(0),
-                                    minimumSize: MaterialStateProperty.all<Size>(
-                                        const Size(400, 28)),
+                                    minimumSize:
+                                        MaterialStateProperty.all<Size>(
+                                            const Size(400, 28)),
                                   )),
                             ],
                           ),

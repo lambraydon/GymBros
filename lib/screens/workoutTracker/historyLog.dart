@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
+import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/shared/constants.dart';
@@ -26,9 +27,9 @@ class _HistoryLog extends State<HistoryLog> {
       List.generate(100, (index) => GlobalKey());
 
   // Checkbox was tapped
-  void onCheckBoxChanged(String workoutName, String exerciseName, int index) {
+  void onCheckBoxChanged(Set set) {
     Provider.of<WorkoutData>(context, listen: false)
-        .checkOffSet(workoutName, exerciseName, index);
+        .checkOffSet(set);
   }
 
   // text controllers
@@ -267,25 +268,11 @@ class _HistoryLog extends State<HistoryLog> {
                                   return SizeTransition(
                                       key: UniqueKey(),
                                       sizeFactor: animation,
-                                      child: setsTile(
-                                        weight: widget.workout.exercises[index]
-                                            .sets[num].weight,
-                                        reps: widget.workout.exercises[index]
-                                            .sets[num].reps,
-                                        index: widget.workout.exercises[index]
-                                            .sets[num].index,
-                                        isCompleted: widget
-                                            .workout
-                                            .exercises[index]
-                                            .sets[num]
-                                            .isCompleted,
-                                        onCheckBoxChanged: (val) =>
-                                            onCheckBoxChanged(
-                                          widget.workout.name,
-                                          widget.workout.exercises[index].name,
-                                          widget.workout.exercises[index]
-                                              .sets[num].index,
-                                        ),
+                                      child: SetsTile(
+                                        set: widget.workout.exercises[index].sets[num],
+                                        onCheckBoxChanged: (val) {
+                                          return onCheckBoxChanged(widget.workout
+                                              .exercises[index].sets[num]);},
                                       ));
                                 }),
                             ElevatedButton.icon(

@@ -14,4 +14,14 @@ class Set {
   Map<String, dynamic> toJson() {
     return {"index": index, "weight": weight, "reps": reps};
   }
+
+  // Total volume of set in kg
+  double volume() {
+    return weight * reps;
+  }
+
+  @override
+  String toString() {
+    return "$weight kg × $reps";
+  }
 }
