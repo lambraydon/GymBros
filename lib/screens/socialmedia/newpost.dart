@@ -20,7 +20,7 @@ class _NewPostState extends State<NewPost> {
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());
   final TextEditingController _descController = TextEditingController();
 
-  void postImage(String uid, String username) async {
+  void postImage(String uid, String username, String profImage) async {
     setState(() {
       isLoading = true;
     });
@@ -32,7 +32,7 @@ class _NewPostState extends State<NewPost> {
         _file!,
         uid,
         username,
-        //profImage,
+        profImage,
       );
       if (res == "success") {
         setState(() {
@@ -73,7 +73,7 @@ class _NewPostState extends State<NewPost> {
     _descController.dispose();
   }
 
-  _selectimage(BuildContext parentContext) async {
+  selectimage(BuildContext parentContext) async {
     return showDialog(
         context: parentContext,
         builder: (context) {
@@ -140,7 +140,7 @@ class _NewPostState extends State<NewPost> {
                 Center(
                     child: IconButton(
                   icon: const Icon(Icons.upload),
-                  onPressed: () => _selectimage(context),
+                  onPressed: () => selectimage(context),
                 )),
                 /*
                 Row(
@@ -178,7 +178,7 @@ class _NewPostState extends State<NewPost> {
                 const Divider(),
                 Center(
                     child: TextButton(
-                  onPressed: () => {postImage(db.uid, userData["Name"])},
+                  onPressed: () => {postImage(db.uid, userData["Name"], userData['profilephotoURL'])},
                   child: const Text("Post",
                       style: TextStyle(
                           color: Colors.blue,

@@ -1,12 +1,50 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/components/likeAnimation.dart';
+import 'package:gymbros/screens/socialmedia/commentpage.dart';
+import 'package:gymbros/services/authservice.dart';
+import 'package:gymbros/services/databaseservice.dart';
+import 'package:gymbros/shared/imageUtil.dart';
 import 'package:intl/intl.dart';
 
-class PostView extends StatelessWidget {
+class PostView extends StatefulWidget {
   final snap;
   const PostView({
     Key? key,
     required this.snap,
   }) : super(key: key);
+
+  @override
+  State<PostView> createState() => _PostViewState();
+}
+
+class _PostViewState extends State<PostView> {
+  int commentLen = 0;
+  bool isLikeAnimating = false;
+  final DatabaseService _db = DatabaseService(uid: AuthService().getUid());
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCommentLen();
+  }
+
+  fetchCommentLen() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+      commentLen = snap.docs.length;
+    } catch (err) {
+      showSnackBar(
+        context,
+        err.toString(),
+      );
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +59,9 @@ class PostView extends StatelessWidget {
                 .copyWith(right: 0),
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 16,
-                  backgroundImage: NetworkImage(
-                      'https://plus.unsplash.com/premium_photo-1679635697694-4ab045eb0af6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80'),
+                  backgroundImage: NetworkImage(widget.snap['profImage'].toString()),
                 ),
                 Expanded(
                   child: Padding(
@@ -34,7 +71,7 @@ class PostView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          snap["username"],
+                          widget.snap["username"],
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -68,86 +105,131 @@ class PostView extends StatelessWidget {
                                       )
                                       .toList(),
                                 ),
-                              )
-                      );
+                              ));
                     },
                     icon: const Icon(Icons.more_vert)),
               ],
             ),
           ),
           // Image Body
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            width: double.infinity,
-            child: Image.network(snap["postUrl"],
-              fit: BoxFit.cover,
-            ),
+          GestureDetector(
+            onDoubleTap: () async {
+              _db.likePost(
+                widget.snap['postId'].toString(),
+                _db.uid,
+                widget.snap['likes'],
+              );
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(alignment: Alignment.center, children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.35,
+                width: double.infinity,
+                child: Image.network(
+                  widget.snap["postUrl"],
+                  fit: BoxFit.cover,
+                ),
+              ),
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isLikeAnimating ? 1 : 0,
+                child: LikeAnimation(
+                  isAnimating: isLikeAnimating,
+                  duration: const Duration(
+                    milliseconds: 400,
+                  ),
+                  onEnd: () {
+                    setState(() {
+                      isLikeAnimating = false;
+                    });
+                  },
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                    size: 100,
+                  ),
+                ),
+              ),
+            ]),
           ),
+
           // Like and Comment Bar
           Row(
             children: [
               IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  )
+                onPressed: () async {
+                  _db.likePost(
+                    widget.snap['postId'].toString(),
+                    _db.uid,
+                    widget.snap['likes'],
+                  );
+                },
+                icon: widget.snap['likes'].contains(_db.uid)
+                    ? const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : const Icon(
+                        Icons.favorite_border,
+                      ),
               ),
               IconButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder:(context) => CommentPage(
+                            postID: widget.snap['postID'].toString()
+                    )
+                    )
+                  ),
                   icon: const Icon(
                     Icons.comment_outlined,
-                  )
-              ),
+                  )),
             ],
           ),
           Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${snap["likes"].length} likes"),
+                Text("${widget.snap["likes"].length} likes"),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.only(
-                    top: 8
-                  ),
+                  padding: const EdgeInsets.only(top: 8),
                   child: RichText(
                     text: TextSpan(
-                      style: const TextStyle(color: Colors.black45),
-                      children: [
-                        TextSpan(
-                          text: snap["username"],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: " ${snap["description"]}",
-                        )
-                      ]
-                    ),
+                        style: const TextStyle(color: Colors.black45),
+                        children: [
+                          TextSpan(
+                            text: widget.snap["username"],
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: " ${widget.snap["description"]}",
+                          )
+                        ]),
                   ),
                 ),
                 InkWell(
                   onTap: () {},
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: const Text(
-                        'View all 200 comments',
-                    style: TextStyle(fontSize: 16, color: Colors.black38))
-                  ),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: const Text('View all 200 comments',
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.black38))),
                 ),
                 Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                         DateFormat.yMMMd().format(
-                            snap["datePublished"].toDate(),
+                          widget.snap["datePublished"].toDate(),
                         ),
-                        style: const TextStyle(fontSize: 16, color: Colors.black38)
-                )
-                ),
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.black38))),
               ],
             ),
           )
