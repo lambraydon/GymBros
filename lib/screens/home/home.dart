@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
+import 'package:gymbros/screens/socialmedia/searchscreen.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseStorageService.dart';
@@ -87,6 +88,15 @@ class _HomeState extends State<Home> {
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
+            icon: const Icon(Icons.person_add),
+            label: const Text('Find Friends'),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(
+                builder: (context) => const SearchScreen()
+            )
+            ),
+          ),
+          TextButton.icon(
             icon: const Icon(Icons.person),
             label: const Text('logout'),
             onPressed: () async {
@@ -133,7 +143,7 @@ class _HomeState extends State<Home> {
                   text: userData["Bio"],
                   sectionName: "Bio : ",
                   onPressedFunc: () => editField("Bio")),
-              MyTextField(text: userData['email'], sectionName: "Email : ")
+              MyTextField(text: userData['Email'], sectionName: "Email : ")
             ]);
           } else if (snapshot.hasError) {
             return Center(child: Text("Error + ${snapshot.error.toString()}"));
