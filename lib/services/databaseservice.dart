@@ -221,23 +221,23 @@ class DatabaseService {
     try {
       DocumentSnapshot snap =
       await _firestore.collection('userProfiles').doc(uid).get();
-      List following = (snap.data()! as dynamic)['following'];
+      List following = (snap.data()! as dynamic)['Following'];
 
       if (following.contains(followId)) {
         await _firestore.collection('userProfiles').doc(followId).update({
-          'followers': FieldValue.arrayRemove([uid])
+          'Followers': FieldValue.arrayRemove([uid])
         });
 
         await _firestore.collection('userProfiles').doc(uid).update({
-          'following': FieldValue.arrayRemove([followId])
+          'Following': FieldValue.arrayRemove([followId])
         });
       } else {
         await _firestore.collection('userProfiles').doc(followId).update({
-          'followers': FieldValue.arrayUnion([uid])
+          'Followers': FieldValue.arrayUnion([uid])
         });
 
         await _firestore.collection('userProfiles').doc(uid).update({
-          'following': FieldValue.arrayUnion([followId])
+          'Following': FieldValue.arrayUnion([followId])
         });
       }
     } catch (e) {

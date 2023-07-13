@@ -12,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:gymbros/screens/components/myedittextfield.dart';
 import 'package:provider/provider.dart';
 
-
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -24,15 +23,14 @@ class _HomeState extends State<Home> {
   Uint8List? _file;
   bool isLoading = false;
   @override
-
   void initState() {
     super.initState();
     Provider.of<WorkoutData>(context, listen: false).initialiseWorkoutList();
   }
 
   final AuthService _auth = AuthService();
-  final CollectionReference userProfiles = FirebaseFirestore.instance.collection("userProfiles");
-
+  final CollectionReference userProfiles =
+      FirebaseFirestore.instance.collection("userProfiles");
 
   selectimage(BuildContext parentContext) async {
     return showDialog(
@@ -90,11 +88,8 @@ class _HomeState extends State<Home> {
           TextButton.icon(
             icon: const Icon(Icons.person_add),
             label: const Text('Find Friends'),
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(
-                builder: (context) => const SearchScreen()
-            )
-            ),
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SearchScreen())),
           ),
           TextButton.icon(
             icon: const Icon(Icons.person),
@@ -113,8 +108,11 @@ class _HomeState extends State<Home> {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
             return ListView(children: [
               const SizedBox(height: 50),
-              Center(
-                child: Stack(
+              Row(children: [
+                const Padding(
+                  padding: EdgeInsets.all(10),
+                ),
+                Stack(
                   children: [
                     CircleAvatar(
                         radius: 64,
@@ -129,11 +127,28 @@ class _HomeState extends State<Home> {
                         ))
                   ],
                 ),
-              ),
-              Text(
-                "Logged in as ${_auth.getEmail()}",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey[700]),
+                Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            buildStatColumn(userData['Followers'].length, "followers"),
+                            buildStatColumn(userData['Following'].length, "following"),
+                          ],
+                        )
+                      ],
+                    )),
+              ]),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Text(
+                  "Logged in as ${_auth.getEmail()}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
               ),
               MyEditTextField(
                   text: userData["Name"],
@@ -156,6 +171,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
   //edit function
   Future<void> editField(String field) async {
     String newVal = "";
@@ -228,12 +244,13 @@ class _HomeState extends State<Home> {
                       Uint8List file = await pickImage(
                         ImageSource.gallery,
                       );
-                      String photoUrl = await dbStorageMethods().uploadImageToStorage('profilepics', file, false);
+                      String photoUrl = await dbStorageMethods()
+                          .uploadImageToStorage('profilepics', file, false);
                       if (photoUrl.trim().isNotEmpty) {
                         await userProfiles
                             .doc(_auth.getUid())
                             .update({"profilephotoURL": photoUrl});
-                            }
+                      }
                     },
                   ),
                 ],
@@ -246,6 +263,32 @@ class _HomeState extends State<Home> {
                         style: TextStyle(color: Colors.black))),
               ],
             ));
+  }
 
+  Column buildStatColumn(int num, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          num.toString(),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 4),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

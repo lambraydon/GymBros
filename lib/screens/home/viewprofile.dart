@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/components/followButton.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
+import 'package:gymbros/services/authservice.dart';
+import 'package:gymbros/services/databaseservice.dart';
 import 'package:gymbros/shared/constants.dart';
+import 'package:gymbros/shared/imageUtil.dart';
 
 class ViewProfile extends StatefulWidget {
   final String uid;
@@ -12,14 +17,45 @@ class ViewProfile extends StatefulWidget {
 }
 
 class _ViewProfileState extends State<ViewProfile> {
+  bool isLoading = false;
   int postLen = 0;
   int followers = 0;
   int following = 0;
+  bool isFollowing = false;
   CollectionReference userProfiles =
       FirebaseFirestore.instance.collection("userProfiles");
 
   @override
+  void initState() {
+    super.initState();
+    updateInfo();
+  }
+
+  Future<void> updateInfo() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await userProfiles.doc(widget.uid).get();
+      var userData = userSnap.data()! as Map<String, dynamic>;
+      followers = userData['Followers'].length;
+      following = userData['Following'].length;
+      isFollowing = userData['Followers'].contains(AuthService().getUid());
+    } catch (e) {
+      showSnackBar(
+        context,
+        e.toString(),
+      );
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    DatabaseService _db = DatabaseService(uid: AuthService().getUid());
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -34,7 +70,13 @@ class _ViewProfileState extends State<ViewProfile> {
           if (snapshot.hasData) {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
             return ListView(children: [
+              const Padding(
+                padding: EdgeInsets.all(15),
+              ),
               Row(children: [
+                const Padding(
+                  padding: EdgeInsets.all(10),
+                ),
                 CircleAvatar(
                   backgroundColor: Colors.grey,
                   backgroundImage: NetworkImage(
@@ -44,25 +86,62 @@ class _ViewProfileState extends State<ViewProfile> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: Column(children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        buildStatColumn(postLen, "posts"),
-                        buildStatColumn(followers, "followers"),
-                        buildStatColumn(following, "following"),
-                      ],
-                    ),
-                  ]),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          buildStatColumn(postLen, "posts"),
+                          buildStatColumn(followers, "followers"),
+                          buildStatColumn(following, "following"),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          isFollowing
+                              ? FollowButton(
+                                  text: 'Unfollow',
+                                  backgroundColor: backgroundColor,
+                                  textColor: Colors.black,
+                                  borderColor: Colors.grey,
+                                  function: () async {
+                                    await _db.followUser(
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                      userData['Uid'],
+                                    );
+
+                                    setState(() {
+                                      isFollowing = false;
+                                      followers--;
+                                    });
+                                  },
+                                )
+                              : FollowButton(
+                                  text: 'Follow',
+                                  backgroundColor: Colors.blue,
+                                  textColor: Colors.white,
+                                  borderColor: Colors.blue,
+                                  function: () async {
+                                    await _db.followUser(
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                      userData['Uid'],
+                                    );
+
+                                    setState(() {
+                                      isFollowing = true;
+                                      followers++;
+                                    });
+                                  },
+                                )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ]),
               const SizedBox(height: 50),
-              Center(
-                child: CircleAvatar(
-                    radius: 64,
-                    backgroundImage: NetworkImage(userData["profilephotoURL"])),
-              ),
               MyTextField(text: userData["Name"], sectionName: "Username : "),
               MyTextField(text: userData["Bio"], sectionName: "Bio : "),
               MyTextField(text: userData['Email'], sectionName: "Email : ")
