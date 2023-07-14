@@ -12,14 +12,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:gymbros/screens/components/myedittextfield.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class MyProfile extends StatefulWidget {
+  const MyProfile.MyProfile({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<MyProfile> createState() => _MyProfileState();
 }
 
-class _HomeState extends State<Home> {
+class _MyProfileState extends State<MyProfile> {
   Uint8List? _file;
   bool isLoading = false;
   @override
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
   final CollectionReference userProfiles =
       FirebaseFirestore.instance.collection("userProfiles");
 
-  selectimage(BuildContext parentContext) async {
+  selectImage(BuildContext parentContext) async {
     return showDialog(
         context: parentContext,
         builder: (context) {
@@ -78,96 +78,132 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: const Text('Home Page'),
-        backgroundColor: appBarColor,
-        elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: const Icon(Icons.person_add),
-            label: const Text('Find Friends'),
-            onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SearchScreen())),
-          ),
-          TextButton.icon(
-            icon: const Icon(Icons.person),
-            label: const Text('logout'),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-          ),
-        ],
-      ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: userProfiles.doc(_auth.getUid()).snapshots(),
-        builder: (context, snapshot) {
-          //get user data
-          if (snapshot.hasData) {
-            final userData = snapshot.data!.data() as Map<String, dynamic>;
-            return ListView(children: [
-              const SizedBox(height: 50),
-              Row(children: [
-                const Padding(
-                  padding: EdgeInsets.all(10),
-                ),
-                Stack(
-                  children: [
-                    CircleAvatar(
-                        radius: 64,
-                        backgroundImage:
-                            NetworkImage(userData["profilephotoURL"])),
-                    Positioned(
-                        bottom: -15,
-                        left: 93,
-                        child: IconButton(
-                          onPressed: () => changePhoto(),
-                          icon: const Icon(Icons.add_a_photo_sharp),
-                        ))
-                  ],
-                ),
-                Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            buildStatColumn(userData['Followers'].length, "followers"),
-                            buildStatColumn(userData['Following'].length, "following"),
-                          ],
-                        )
-                      ],
-                    )),
-              ]),
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Text(
-                  "Logged in as ${_auth.getEmail()}",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        appBar: AppBar(
+          title: const Text('Home Page'),
+          flexibleSpace: gradientColor,
+          //backgroundColor: appBarColor,
+          elevation: 0.0,
+          actions: <Widget>[
+            TextButton.icon(
+              icon: const Icon(
+                Icons.person_add,
+                color: Colors.white,
               ),
-              MyEditTextField(
-                  text: userData["Name"],
-                  sectionName: "Username : ",
-                  onPressedFunc: () => editField("Name")),
-              MyEditTextField(
-                  text: userData["Bio"],
-                  sectionName: "Bio : ",
-                  onPressedFunc: () => editField("Bio")),
-              MyTextField(text: userData['Email'], sectionName: "Email : ")
-            ]);
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error + ${snapshot.error.toString()}"));
-          } else {
-            return const Center(
-              child: Text("Error"),
-            );
-          }
-        },
+              label: const Text('Find Friends',
+                  style: TextStyle(color: Colors.white)),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const SearchScreen())),
+            ),
+            TextButton.icon(
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'Log Out',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () async {
+                await _auth.signOut();
+              },
+            ),
+          ],
+          bottom: const TabBar(
+            indicatorColor: Colors.white,
+            indicatorWeight: 5,
+            tabs: [
+              Tab(
+                icon: Icon(Icons.person),
+                text: "Profile",
+              ),
+              Tab(icon: Icon(Icons.bar_chart), text: "Progress")
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            StreamBuilder<DocumentSnapshot>(
+              stream: userProfiles.doc(_auth.getUid()).snapshots(),
+              builder: (context, snapshot) {
+                //get user data
+                if (snapshot.hasData) {
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return ListView(children: [
+                    const SizedBox(height: 50),
+                    Row(children: [
+                      const Padding(
+                        padding: EdgeInsets.all(10),
+                      ),
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                              radius: 64,
+                              backgroundImage:
+                                  NetworkImage(userData["profilephotoURL"])),
+                          Positioned(
+                              bottom: -15,
+                              left: 93,
+                              child: IconButton(
+                                onPressed: () => changePhoto(),
+                                icon: const Icon(Icons.add_a_photo_sharp),
+                              ))
+                        ],
+                      ),
+                      Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  buildStatColumn(userData['Followers'].length,
+                                      "followers"),
+                                  buildStatColumn(userData['Following'].length,
+                                      "following"),
+                                ],
+                              )
+                            ],
+                          )),
+                    ]),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: Text(
+                        "Logged in as ${_auth.getEmail()}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ),
+                    MyEditTextField(
+                        text: userData["Name"],
+                        sectionName: "Username : ",
+                        onPressedFunc: () => editField("Name")),
+                    MyEditTextField(
+                        text: userData["Bio"],
+                        sectionName: "Bio : ",
+                        onPressedFunc: () => editField("Bio")),
+                    MyTextField(
+                        text: userData['Email'], sectionName: "Email : ")
+                  ]);
+                } else if (snapshot.hasError) {
+                  return Center(
+                      child: Text("Error + ${snapshot.error.toString()}"));
+                } else {
+                  return const Center(
+                    child: Text("Error"),
+                  );
+                }
+              },
+            ),
+            const Text("Analytics")
+          ],
+        ),
       ),
     );
   }

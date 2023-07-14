@@ -26,3 +26,12 @@ InputDecoration textInputDecoration2(String input) {
 }
 const backgroundColor = Color.fromRGBO(224, 224, 224, 1);
 const appBarColor = Color.fromRGBO(98, 84, 138, 1);
+Widget gradientColor = Container(
+    decoration: const BoxDecoration(
+        gradient: LinearGradient(
+            colors: [Color.fromRGBO(123,67,151, 100), Color.fromRGBO(220, 36, 48, 100)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight
+        )
+    ),
+);
