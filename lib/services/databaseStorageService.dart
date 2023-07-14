@@ -26,7 +26,7 @@ class dbStorageMethods {
 
     TaskSnapshot snapshot = await uploadTask;
     String downloadUrl = await snapshot.ref.getDownloadURL();
-    print('file uploaded to stoarage!');
+    print('file uploaded to storage!');
     return downloadUrl;
   }
 }

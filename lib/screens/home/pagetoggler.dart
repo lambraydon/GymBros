@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:gymbros/screens/home/home.dart';
+import 'package:gymbros/screens/home/myprofile.dart';
 import 'package:gymbros/screens/socialmedia/feed.dart';
 import 'package:gymbros/screens/workoutTracker/workoutHistory.dart';
 
@@ -48,7 +48,7 @@ class _PageTogglerState extends State<PageToggler> {
         children: [
           Feed(),
           WorkoutHistory(),
-          Home()
+          MyProfile.MyProfile()
         ],
       ),
       bottomNavigationBar: CupertinoTabBar(

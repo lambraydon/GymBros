@@ -27,9 +27,9 @@ class GbProfile {
     var snap = snapshot.data() as Map<String, dynamic>;
     return GbProfile(
       name: snap['Name'],
-      uid: snap['uid'],
-      email: snap["email"],
-      bio: snap['bio'],
+      uid: snap['Uid'],
+      email: snap["Email"],
+      bio: snap['Bio'],
       followers: snap['Followers'],
       following: snap['Following'],
       profilephotoURL: snap['profilephotoURL']
