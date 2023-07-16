@@ -16,6 +16,7 @@ class CommentPage extends StatefulWidget {
 }
 
 class _CommentPageState extends State<CommentPage> {
+  bool isLoading = false;
   final AuthService _auth = AuthService();
   final _db = DatabaseService(uid: AuthService().getUid());
   final TextEditingController commentEditingController =
@@ -54,6 +55,7 @@ class _CommentPageState extends State<CommentPage> {
         stream: userProfiles.doc(_auth.getUid()).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            print("post ID:" + widget.postID);
             final userData = snapshot.data!.data() as Map<String, dynamic>;
             return Scaffold(
               appBar: AppBar(
@@ -97,7 +99,7 @@ class _CommentPageState extends State<CommentPage> {
                     children: [
                       CircleAvatar(
                         backgroundImage:
-                            NetworkImage(userData['profilephotURL']),
+                            NetworkImage(userData['profilephotoURL']),
                         radius: 18,
                       ),
                       Expanded(
@@ -114,7 +116,7 @@ class _CommentPageState extends State<CommentPage> {
                       ),
                       InkWell(
                         onTap: () => postComment(
-                          userData['uid'],
+                          userData['Uid'],
                           userData['Name'],
                           userData['profilephotoURL'],
                         ),
@@ -135,9 +137,7 @@ class _CommentPageState extends State<CommentPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text("Error + ${snapshot.error.toString()}"));
           } else {
-            return const Center(
-              child: Text("Error"),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }
