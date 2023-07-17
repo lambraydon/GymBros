@@ -2,7 +2,6 @@ import "dart:typed_data";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/models/gbprofile.dart";
 import "package:gymbros/screens/workoutTracker/workout.dart";
-import "package:gymbros/services/authservice.dart";
 import "package:gymbros/services/databaseStorageService.dart";
 import "package:uuid/uuid.dart";
 import "../models/post.dart";
@@ -22,37 +21,37 @@ class DatabaseService {
   Future<void> createUserProfile(String name, String email) async {
     return await userProfiles.doc(uid).set({
       "Name": name,
-      "Uid" : uid,
-      "Email" : email,
-      "Bio" : "Edit Bio",
-      "Followers" : [],
+      "Uid": uid,
+      "Email": email,
+      "Bio": "Edit Bio",
+      "Followers": [],
       "Following": [],
-      "profilephotoURL" : 'https://firebasestorage.googleapis.com/v0/b/gymbros-1d655.appspot.com/o/profilepics%2Fdefault_profile_pic.jpg?alt=media&token=419518ee-0ddc-4590-943d-62b87bd9c611'
-    }).catchError(
-        (error) => print("Failed to create user: $error"));
+      "profilephotoURL":
+          'https://firebasestorage.googleapis.com/v0/b/gymbros-1d655.appspot.com/o/profilepics%2Fdefault_profile_pic.jpg?alt=media&token=419518ee-0ddc-4590-943d-62b87bd9c611'
+    }).catchError((error) => print("Failed to create user: $error"));
   }
 
-  Future<void> editUserProfile(String name, String email, String bio, String photoURL) async {
+  Future<void> editUserProfile(
+      String name, String email, String bio, String photoURL) async {
     return await userProfiles.doc(uid).set({
       "Name": name,
-      "uid" : uid,
-      "email" : email,
-      "bio" : bio,
-      "Followers" : [],
+      "uid": uid,
+      "email": email,
+      "bio": bio,
+      "Followers": [],
       "Following": [],
-      "profilephotoURL" : photoURL
-    }).catchError(
-            (error) => print("Failed to create user: $error"));
+      "profilephotoURL": photoURL
+    }).catchError((error) => print("Failed to create user: $error"));
   }
 
   //get GbProfile Details
   Future<GbProfile> getUserDetails() async {
     DocumentSnapshot documentSnapshot =
-    await _firestore.collection('userProfiles').doc(uid).get();
+        await _firestore.collection('userProfiles').doc(uid).get();
 
     return GbProfile.fromSnap(documentSnapshot);
   }
-  
+
   // write workout data into workouts sub collection
   void saveWorkoutToDb(Workout workout) async {
     DocumentReference workoutRef =
@@ -91,7 +90,7 @@ class DatabaseService {
 
       List<dynamic> exercisesData = workoutSnapshot['exercises'];
 
-      exercisesData.forEach((exerciseData) {
+      for (var exerciseData in exercisesData) {
         Exercise exercise = Exercise(
             name: exerciseData['name'],
             // sets list
@@ -101,13 +100,14 @@ class DatabaseService {
           Set set = Set(
               index: setData['index'],
               weight: setData['weight'],
-              reps: setData['reps']);
+              reps: setData['reps'],
+              isCompleted: setData['isCompleted']);
           // write sets into exercises list
           exercise.sets.add(set);
         });
         // write exercises into exercises list
         workout.exercises.add(exercise);
-      });
+      }
 
       return workout;
     } else {
@@ -139,7 +139,7 @@ class DatabaseService {
     String res = "Some error occurred";
     try {
       String photoUrl =
-      await dbStorageMethods().uploadImageToStorage('posts', file, true);
+          await dbStorageMethods().uploadImageToStorage('posts', file, true);
       String postId = const Uuid().v1(); // creates unique id based on time
       Post post = Post(
         description: description,

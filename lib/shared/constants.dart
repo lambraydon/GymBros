@@ -26,3 +26,4 @@ InputDecoration textInputDecoration2(String input) {
 }
 const backgroundColor = Color.fromRGBO(224, 224, 224, 1);
 const appBarColor = Color.fromRGBO(98, 84, 138, 1);
+Color greyColor = Colors.grey.shade200;

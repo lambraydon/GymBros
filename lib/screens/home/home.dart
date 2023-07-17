@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
                   text: userData["Bio"],
                   sectionName: "Bio : ",
                   onPressedFunc: () => editField("Bio")),
-              MyTextField(text: userData['email'], sectionName: "Email : ")
+              MyTextField(text: userData['Email'], sectionName: "Email : ")
             ]);
           } else if (snapshot.hasError) {
             return Center(child: Text("Error + ${snapshot.error.toString()}"));
