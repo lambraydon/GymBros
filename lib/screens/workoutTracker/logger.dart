@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
@@ -9,11 +8,11 @@ import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/shared/restTimer.dart';
 import 'package:gymbros/shared/restTimerDialog.dart';
-import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 import '../../shared/constants.dart';
+import '../../shared/setTiles.dart';
 
 class Logger extends StatefulWidget {
   final Workout workout;
@@ -26,7 +25,6 @@ class Logger extends StatefulWidget {
 }
 
 class _LoggerState extends State<Logger> {
-
   @override
   void initState() {
     startWorkoutTimer();
@@ -165,24 +163,16 @@ class _LoggerState extends State<Logger> {
 
   // save set
   void saveSet(Exercise exercise) {
-    double newWeight = double.parse(weightController.text);
-    int newReps = int.parse(repsController.text);
-
     // add set to set list
-    exercise.addSet(newWeight, newReps);
-
-    // pop dialog box
-    Navigator.pop(context);
-    clearSet();
+    exercise.addSet(0, 0);
 
     int exerciseIndex = widget.workout.exercises.indexOf(exercise);
-
     int numSet = exercise.sets.length;
 
     // animation
     _listKeys[exerciseIndex]
         .currentState!
-        .insertItem(numSet - 1, duration: const Duration(seconds: 1));
+        .insertItem(numSet - 1, duration: const Duration(milliseconds: 500));
   }
 
   // cancel set
@@ -258,204 +248,315 @@ class _LoggerState extends State<Logger> {
     return "$hourString:$minString:$secString";
   }
 
+  void unfocusTextField() {
+    FocusScope.of(context).unfocus();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<WorkoutData>(
-      builder: (context, value, child) => Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        unfocusTextField();
+      },
+      child: Consumer<WorkoutData>(
+        builder: (context, value, child) => Scaffold(
           backgroundColor: backgroundColor,
-          elevation: 0.0,
-          actions: <Widget>[
-            TextButton.icon(
-              icon: const Icon(Icons.save_alt_outlined),
-              label: const Text('Finish'),
-              onPressed: () {
-                // Store workoutTimeInSec in workout object
-                widget.workout.workoutDurationInSec = workoutTimeInSec;
+          appBar: AppBar(
+            backgroundColor: backgroundColor,
+            elevation: 0.0,
+            automaticallyImplyLeading: false,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  // Store workoutTimeInSec in workout object
+                  widget.workout.workoutDurationInSec = workoutTimeInSec;
 
-                // Save workout to DB
-                widget.db.saveWorkoutToDb(widget.workout);
+                  // Save workout to DB
+                  widget.db.saveWorkoutToDb(widget.workout);
 
-                // Add workout to local list
-                Provider.of<WorkoutData>(context, listen: false)
-                    .addWorkout(widget.workout);
+                  // Add workout to local list
+                  Provider.of<WorkoutData>(context, listen: false)
+                      .addWorkout(widget.workout);
 
-                Navigator.pop(context);
+                  Navigator.pop(context);
 
-                goToWorkoutComplete(widget.workout);
-              },
-            ),
-          ],
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(16.0),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          children: <Widget>[
-            Text(
-              widget.workout.name,
-              style: const TextStyle(
-                fontSize: 32.0,
-                fontWeight: FontWeight.w500,
+                  goToWorkoutComplete(widget.workout);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    "Finish",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              workoutTimeString(),
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            AnimatedList(
-                key: _key1,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                initialItemCount: widget.workout.numberOfExercises(),
-                itemBuilder: (context, index, animation) {
-                  return Container(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: SizeTransition(
-                        key: UniqueKey(),
-                        sizeFactor: animation,
-                        child: Padding(
-                          padding: const EdgeInsets.all(0.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    widget.workout.exercises[index].name,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: appBarColor),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {
-                                        timerDialog(
-                                            widget.workout.exercises[index]);
-                                      },
-                                      icon: const Icon(
-                                          Icons.access_time_outlined)),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 16.0,
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
+            ],
+          ),
+          body: ListView(
+            padding: const EdgeInsets.all(0.0),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  widget.workout.name,
+                  style: const TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  workoutTimeString(),
+                ),
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+              ListView.builder(
+                  key: _key1,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: widget.workout.numberOfExercises(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.workout.exercises[index].name,
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: appBarColor),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      timerDialog(
+                                          widget.workout.exercises[index]);
+                                    },
+                                    icon:
+                                        const Icon(Icons.access_time_outlined)),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 16.0,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 24,
+                                  width: 44,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
                                       "Set",
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w800),
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    Text("Best Set",
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80,
+                                  height: 24,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Best Set",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80,
+                                  height: 24,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Weight (kg)",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80,
+                                  height: 24,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Reps",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: 32,
+                                    height: 24,
+                                    child: Icon(Icons.check_box_rounded))
+                              ],
+                            ),
+                          ),
+                          AnimatedList(
+                              key: _listKeys[index],
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              initialItemCount:
+                                  widget.workout.exercises[index].sets.length,
+                              itemBuilder: (context, int num, animation) {
+                                return SizeTransition(
+                                  sizeFactor: animation,
+                                  child: SetTile(
+                                    set: widget
+                                        .workout.exercises[index].sets[num],
+                                    onCheckBoxChanged: (val) {
+                                      if (val == true &&
+                                          widget.workout.exercises[index]
+                                              .isRestTimer) {
+                                        restTimerViewer(
+                                            widget.workout.exercises[index]);
+                                      }
+                                      return onCheckBoxChanged(widget
+                                          .workout.exercises[index].sets[num]);
+                                    },
+                                  ),
+                                );
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16.0),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: InkWell(
+                                onTap: () {
+                                  saveSet(widget.workout.exercises[index]);
+                                },
+                                child: Container(
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      color: Colors.white),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        color: Colors.black,
+                                      ),
+                                      Text(
+                                        "Add Set",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w800)),
-                                    Text("Weight (kg)",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w800)),
-                                    Text("Reps",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w800)),
-                                    Icon(Icons.check)
-                                  ],
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                            color: Colors.black),
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                              AnimatedList(
-                                  key: _listKeys[index],
-                                  shrinkWrap: true,
-                                  physics: const ClampingScrollPhysics(),
-                                  initialItemCount: widget
-                                      .workout.exercises[index].sets.length,
-                                  itemBuilder: (context, int num, animation) {
-                                    return SizeTransition(
-                                        key: UniqueKey(),
-                                        sizeFactor: animation,
-                                        child: SetsTile(
-                                          set: widget.workout.exercises[index]
-                                              .sets[num],
-                                          onCheckBoxChanged: (val) {
-                                            if (val == true &&
-                                                widget.workout.exercises[index]
-                                                    .isRestTimer) {
-                                              restTimerViewer(widget
-                                                  .workout.exercises[index]);
-                                            }
-                                            return onCheckBoxChanged(widget
-                                                .workout
-                                                .exercises[index]
-                                                .sets[num]);
-                                          },
-                                        ));
-                                  }),
-                              ElevatedButton.icon(
-                                  onPressed: () {
-                                    createNewSet(
-                                        widget.workout.exercises[index]);
-                                  },
-                                  icon: const Icon(
-                                    Icons.add,
-                                  ),
-                                  label: const Text(
-                                    "Add Set",
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  style: ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.white),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.grey),
-                                    shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4.0),
-                                            side: const BorderSide(
-                                                color: Colors.grey))),
-                                    elevation:
-                                        MaterialStateProperty.all<double>(0),
-                                    minimumSize:
-                                        MaterialStateProperty.all<Size>(
-                                            const Size(400, 28)),
-                                  )),
-                            ],
+                            ),
                           ),
-                        )),
-                  );
-                }),
-            const SizedBox(
-              height: 64,
-            ),
-            OutlinedButton(
-                onPressed: createNewExercise,
-                child: const Text("Add Exercise")),
-            const SizedBox(
-              height: 32,
-            ),
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Cancel Workout"))
-          ],
+                        ],
+                      ),
+                    );
+                  }),
+              const SizedBox(
+                height: 64,
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
+                child: InkWell(
+                  onTap: () {
+                    createNewExercise();
+                  },
+                  child: Container(
+                    height: 32,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.lightBlue.shade100),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "Add Exercise",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue.shade900),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 32,
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    height: 32,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.redAccent.shade100),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "Cancel Workout",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red.shade900),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

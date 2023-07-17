@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
+import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/shared/constants.dart';
-import 'package:gymbros/shared/setsTile.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
+import '../../shared/setTiles.dart';
 
 class HistoryLog extends StatefulWidget {
   final Workout workout;
@@ -24,12 +24,16 @@ class _HistoryLog extends State<HistoryLog> {
   //Global key for animated list
   final GlobalKey<AnimatedListState> _key1 = GlobalKey();
   final List<GlobalKey<AnimatedListState>> _listKeys =
-      List.generate(100, (index) => GlobalKey());
+  List.generate(100, (index) => GlobalKey());
 
   // Checkbox was tapped
   void onCheckBoxChanged(Set set) {
-    Provider.of<WorkoutData>(context, listen: false)
-        .checkOffSet(set);
+    Provider.of<WorkoutData>(context, listen: false).checkOffSet(set);
+  }
+
+  // Timer was enabled
+  void onSwitchChanged(Exercise exercise) {
+    Provider.of<WorkoutData>(context, listen: false).checkOffTimer(exercise);
   }
 
   // text controllers
@@ -99,220 +103,284 @@ class _HistoryLog extends State<HistoryLog> {
     exerciseNameController.clear();
   }
 
-  // Create a new set
-  void createNewSet(Exercise exercise) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Add Set"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // weight
-              TextField(
-                controller: weightController,
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                decoration: textInputDecoration2("Weight"),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              // reps
-              TextField(
-                  controller: repsController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  decoration: textInputDecoration2("Reps"))
-            ],
-          ),
-          actions: [
-            // save button
-            MaterialButton(
-              onPressed: () {
-                saveSet(exercise);
-              },
-              child: const Text("save"),
-            ),
-            // cancel button
-            MaterialButton(
-              onPressed: cancelSet,
-              child: const Text("cancel"),
-            )
-          ],
-        ));
-  }
-
   // save set
   void saveSet(Exercise exercise) {
-    double newWeight = double.parse(weightController.text);
-    int newReps = int.parse(repsController.text);
-
     // add set to set list
-    exercise.addSet(newWeight, newReps);
-
-    // pop dialog box
-    Navigator.pop(context);
-    clearSet();
+    exercise.addSet(0, 0);
 
     int exerciseIndex = widget.workout.exercises.indexOf(exercise);
-
     int numSet = exercise.sets.length;
 
     // animation
     _listKeys[exerciseIndex]
         .currentState!
-        .insertItem(numSet - 1, duration: const Duration(seconds: 1));
+        .insertItem(numSet - 1, duration: const Duration(milliseconds: 500));
   }
 
-  // cancel set
-  void cancelSet() {
-    // pop dialog box
-    Navigator.pop(context);
-    clearSet();
+  // Redirect to Completed workout page
+  void goToWorkoutComplete(Workout workout) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WorkoutComplete(
+              workout: workout,
+            )));
   }
 
-  // clear weight and reps controller
-  void clearSet() {
-    weightController.clear();
-    repsController.clear();
+  void unfocusTextField() {
+    FocusScope.of(context).unfocus();
   }
-
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<WorkoutData>(
-      builder: (context, value, child) => Scaffold(
-        backgroundColor: backgroundColor,
-        appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        unfocusTextField();
+      },
+      child: Consumer<WorkoutData>(
+        builder: (context, value, child) => Scaffold(
           backgroundColor: backgroundColor,
-          elevation: 0.0,
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.cancel_presentation_outlined),
-              color: appBarColor
-            ),
-          ],
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(16.0),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          children: <Widget>[
-            Text(
-              widget.workout.name,
-              style: const TextStyle(
-                fontSize: 32.0,
-                fontWeight: FontWeight.w500,
+          appBar: AppBar(
+            backgroundColor: backgroundColor,
+            elevation: 0.0,
+            automaticallyImplyLeading: false,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {Navigator.pop(context);},
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.lightBlue.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    "Edit",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 64.0,
-            ),
-            AnimatedList(
-                key: _key1,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                initialItemCount: widget.workout.numberOfExercises(),
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                itemBuilder: (context, index, animation) {
-                  return SizeTransition(
-                      key: UniqueKey(),
-                      sizeFactor: animation,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              widget.workout.exercises[index].name,
-                              textAlign: TextAlign.left,
+            ],
+          ),
+          body: ListView(
+            padding: const EdgeInsets.all(0.0),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  widget.workout.name,
+                  style: const TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  widget.workout.formatWorkoutDuration(),
+                ),
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+              ListView.builder(
+                  key: _key1,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: widget.workout.numberOfExercises(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.workout.exercises[index].name,
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: appBarColor),
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 16.0,
-                            ),
-                            const Row(
+                          ),
+                          const SizedBox(
+                            height: 16.0,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  "Set",
-                                  style: TextStyle(fontWeight: FontWeight.w800),
-                                ),
-                                Text("Best Set",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
-                                Text("Weight (kg)",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
-                                Text("Reps",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w800)),
-                                Icon(Icons.check)
-                              ],
-                            ),
-                            AnimatedList(
-                                key: _listKeys[index],
-                                shrinkWrap: true,
-                                physics: const ClampingScrollPhysics(),
-                                initialItemCount:
-                                    widget.workout.exercises[index].sets.length,
-                                itemBuilder: (context, int num, animation) {
-                                  return SizeTransition(
-                                      key: UniqueKey(),
-                                      sizeFactor: animation,
-                                      child: SetsTile(
-                                        set: widget.workout.exercises[index].sets[num],
-                                        onCheckBoxChanged: (val) {
-                                          return onCheckBoxChanged(widget.workout
-                                              .exercises[index].sets[num]);},
-                                      ));
-                                }),
-                            ElevatedButton.icon(
-                                onPressed: () {
-                                  createNewSet(widget.workout.exercises[index]);
-                                },
-                                icon: const Icon(
-                                  Icons.add,
-                                ),
-                                label: const Text(
-                                  "Add Set",
-                                  style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w500,
+                                SizedBox(
+                                  height: 24,
+                                  width: 44,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Set",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
-                                style: ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.white),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.grey),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                          side: const BorderSide(
-                                              color: Colors.grey))),
-                                  elevation:
-                                      MaterialStateProperty.all<double>(0),
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(400, 28)),
-                                )),
-                          ],
-                        ),
-                      ));
-                }),
-          ],
+                                SizedBox(
+                                  width: 80,
+                                  height: 24,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Best Set",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80,
+                                  height: 24,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Weight (kg)",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80,
+                                  height: 24,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Reps",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w800),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: 32,
+                                    height: 24,
+                                    child: Icon(Icons.check_box_rounded))
+                              ],
+                            ),
+                          ),
+                          AnimatedList(
+                              key: _listKeys[index],
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              initialItemCount:
+                              widget.workout.exercises[index].sets.length,
+                              itemBuilder: (context, int num, animation) {
+                                return SizeTransition(
+                                  sizeFactor: animation,
+                                  child: SetTile(
+                                    set: widget
+                                        .workout.exercises[index].sets[num],
+                                    onCheckBoxChanged: (val) {
+                                      return onCheckBoxChanged(widget
+                                          .workout.exercises[index].sets[num]);
+                                    },
+                                  ),
+                                );
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16.0),
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 6),
+                              child: InkWell(
+                                onTap: () {
+                                  saveSet(widget.workout.exercises[index]);
+                                },
+                                child: Container(
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      color: Colors.white),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        color: Colors.black,
+                                      ),
+                                      Text(
+                                        "Add Set",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                            color: Colors.black),
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+              const SizedBox(
+                height: 64,
+              ),
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
+                child: InkWell(
+                  onTap: () {
+                    createNewExercise();
+                  },
+                  child: Container(
+                    height: 32,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.lightBlue.shade100),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "Add Exercise",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue.shade900),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
