@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 
 
 class MyProfile extends StatefulWidget {
-  const MyProfile.MyProfile({super.key});
+  const MyProfile({super.key});
 
   @override
   State<MyProfile> createState() => _MyProfileState();
