@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/components/mytextfield.dart';
+import 'package:gymbros/screens/home/analyticsview.dart';
 import 'package:gymbros/screens/socialmedia/searchscreen.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
 import 'package:gymbros/services/authservice.dart';
@@ -201,7 +202,7 @@ class _MyProfileState extends State<MyProfile> {
                 }
               },
             ),
-            const Text("Analytics")
+            const AnalyticsView()
           ],
         ),
       ),
