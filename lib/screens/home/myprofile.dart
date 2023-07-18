@@ -12,14 +12,14 @@ import 'package:gymbros/screens/components/myedittextfield.dart';
 import 'package:provider/provider.dart';
 
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class MyProfile extends StatefulWidget {
+  const MyProfile.MyProfile({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<MyProfile> createState() => _MyProfileState();
 }
 
-class _HomeState extends State<Home> {
+class _MyProfileState extends State<MyProfile> {
   Uint8List? _file;
   bool isLoading = false;
   @override

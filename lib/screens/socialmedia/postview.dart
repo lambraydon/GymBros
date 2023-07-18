@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/components/likeAnimation.dart';
+import 'package:gymbros/screens/home/viewprofile.dart';
 import 'package:gymbros/screens/socialmedia/commentpage.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
@@ -27,6 +28,17 @@ class _PostViewState extends State<PostView> {
   void initState() {
     super.initState();
     fetchCommentLen();
+  }
+
+  deletePost(String postId) async {
+    try {
+      await _db.deletePost(postId);
+    } catch (err) {
+      showSnackBar(
+        context,
+        err.toString(),
+      );
+    }
   }
 
   fetchCommentLen() async {
@@ -61,7 +73,8 @@ class _PostViewState extends State<PostView> {
               children: [
                 CircleAvatar(
                   radius: 16,
-                  backgroundImage: NetworkImage(widget.snap['profImage'].toString()),
+                  backgroundImage:
+                      NetworkImage(widget.snap['profImage'].toString()),
                 ),
                 Expanded(
                   child: Padding(
@@ -80,34 +93,77 @@ class _PostViewState extends State<PostView> {
                     ),
                   ),
                 ),
-                IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                                child: ListView(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shrinkWrap: true,
-                                  children: [
-                                    'Delete',
-                                  ]
-                                      .map(
-                                        (e) => InkWell(
-                                          onTap: () {},
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12, horizontal: 16),
-                                            child: Text(e),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ));
-                    },
-                    icon: const Icon(Icons.more_vert)),
+                widget.snap['uid'] == _db.uid
+                    ? IconButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                    child: ListView(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      shrinkWrap: true,
+                                      children: [
+                                        'Delete',
+                                      ]
+                                          .map(
+                                            (e) => InkWell(
+                                              onTap: () {
+                                                deletePost(widget.snap['postId']
+                                                    .toString());
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                child: Text(e),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ));
+                        },
+                        icon: const Icon(Icons.more_vert))
+                    : IconButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                    child: ListView(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      shrinkWrap: true,
+                                      children: [
+                                        'View Profile',
+                                      ]
+                                          .map(
+                                            (e) => InkWell(
+                                              onTap: () => Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewProfile(
+                                                              uid: widget
+                                                                  .snap['uid']
+                                                                  .toString()))),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                child: Text(e),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ));
+                        },
+                        icon: const Icon(Icons.more_vert))
               ],
             ),
           ),
@@ -176,13 +232,9 @@ class _PostViewState extends State<PostView> {
                       ),
               ),
               IconButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder:(context) => CommentPage(
-                            postID: widget.snap['postID'].toString()
-                    )
-                    )
-                  ),
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CommentPage(
+                          postID: widget.snap['postId'].toString()))),
                   icon: const Icon(
                     Icons.comment_outlined,
                   )),
