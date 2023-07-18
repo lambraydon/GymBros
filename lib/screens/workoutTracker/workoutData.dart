@@ -25,6 +25,13 @@ class WorkoutData extends ChangeNotifier {
               Set(index: 1, weight: 10, reps: 10, isCompleted: true),
               Set(index: 2, weight: 10, reps: 10, isCompleted: true)
             ]
+        ),
+        Exercise(
+            name: "Bench Press",
+            sets: [
+              Set(index: 1, weight: 10, reps: 10, isCompleted: true),
+              Set(index: 2, weight: 10, reps: 10, isCompleted: true)
+            ]
         )
       ]
     ),

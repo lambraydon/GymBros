@@ -6,6 +6,7 @@ import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
 import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/shared/exerciseSearch.dart';
 import 'package:gymbros/shared/restTimer.dart';
 import 'package:gymbros/shared/restTimerDialog.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +70,7 @@ class _LoggerState extends State<Logger> {
               actions: [
                 // save button
                 MaterialButton(
-                  onPressed: saveExercise,
+                  onPressed: () {},
                   child: const Text("save"),
                 ),
                 // cancel button
@@ -82,8 +83,7 @@ class _LoggerState extends State<Logger> {
   }
 
   // save exercise name
-  void saveExercise() {
-    String newExerciseName = exerciseNameController.text;
+  void saveExercise(String newExerciseName) {
     // create new exercise object with empty sets
     Exercise exercise = Exercise(name: newExerciseName, sets: []);
 
@@ -196,6 +196,15 @@ class _LoggerState extends State<Logger> {
             builder: (context) => WorkoutComplete(
                   workout: workout,
                 )));
+  }
+
+  void exerciseSearchDialog() {
+    showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return ExerciseSearch(addExercise: saveExercise);
+            }));
   }
 
   void timerDialog(Exercise exercise) {
@@ -507,7 +516,7 @@ class _LoggerState extends State<Logger> {
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
                 child: InkWell(
                   onTap: () {
-                    createNewExercise();
+                    exerciseSearchDialog();
                   },
                   child: Container(
                     height: 32,
