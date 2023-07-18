@@ -48,7 +48,7 @@ class _PageTogglerState extends State<PageToggler> {
         children: [
           Feed(),
           WorkoutHistory(),
-          MyProfile.MyProfile()
+          MyProfile()
         ],
       ),
       bottomNavigationBar: CupertinoTabBar(

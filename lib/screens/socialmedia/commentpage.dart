@@ -55,7 +55,6 @@ class _CommentPageState extends State<CommentPage> {
         stream: userProfiles.doc(_auth.getUid()).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print("post ID:" + widget.postID);
             final userData = snapshot.data!.data() as Map<String, dynamic>;
             return Scaffold(
               appBar: AppBar(
