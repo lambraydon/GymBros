@@ -22,8 +22,15 @@ class WorkoutData extends ChangeNotifier {
         Exercise(
             name: "Lateral Raise",
             sets: [
-              Set(index: 1, weight: 10, reps: 10),
-              Set(index: 2, weight: 10, reps: 10)
+              Set(index: 1, weight: 10, reps: 10, isCompleted: true),
+              Set(index: 2, weight: 10, reps: 10, isCompleted: true)
+            ]
+        ),
+        Exercise(
+            name: "Bench Press",
+            sets: [
+              Set(index: 1, weight: 10, reps: 10, isCompleted: true),
+              Set(index: 2, weight: 10, reps: 10, isCompleted: true)
             ]
         )
       ]
@@ -34,8 +41,8 @@ class WorkoutData extends ChangeNotifier {
           Exercise(
               name: "Lateral Raise",
               sets: [
-                Set(index: 1, weight: 10, reps: 10),
-                Set(index: 2, weight: 10, reps: 10)
+                Set(index: 1, weight: 10, reps: 10, isCompleted: true),
+                Set(index: 2, weight: 10, reps: 10, isCompleted: true)
               ]
           )
         ]

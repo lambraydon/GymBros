@@ -1,18 +1,23 @@
 class Set {
   final int index;
-  final double weight;
-  final int reps;
-  bool isCompleted;
+  double weight;
+  int reps;
+  bool isCompleted = false;
 
   Set({
     required this.index,
     required this.weight,
     required this.reps,
-    this.isCompleted = false,
+    required this.isCompleted,
   });
 
   Map<String, dynamic> toJson() {
-    return {"index": index, "weight": weight, "reps": reps};
+    return {
+      "index": index,
+      "weight": weight,
+      "reps": reps,
+      "isCompleted": isCompleted
+    };
   }
 
   // Total volume of set in kg

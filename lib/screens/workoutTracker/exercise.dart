@@ -7,20 +7,19 @@ class Exercise {
   bool isRestTimer;
   int restTime = 90;
 
-  Exercise({
-    required this.name,
-    required this.sets,
-    this.isCompleted = false,
-    this.isRestTimer = false
-  });
+  Exercise(
+      {required this.name,
+      required this.sets,
+      this.isCompleted = false,
+      this.isRestTimer = false});
 
   // add a set
   void addSet(double weight, int reps) {
     sets.add(Set(
         weight: weight,
         reps: reps,
-        index: sets.length + 1
-    ));
+        index: sets.length + 1,
+        isCompleted: false));
   }
 
   // get number of sets in an exercise
@@ -45,7 +44,7 @@ class Exercise {
 
   @override
   String toString() {
-    String exerciseName =  "${sets.length} × $name";
+    String exerciseName = "${sets.length} × $name";
     String newExerciseName = "";
     int lenExercise = exerciseName.length;
     int maxLength = 24;
