@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../services/authservice.dart';
 import '../../services/databaseservice.dart';
 import '../../shared/constants.dart';
-import '../components/workoutTile.dart';
+import '../components/workoutTileStatic.dart';
 import 'historyLog.dart';
 import 'package:confetti/confetti.dart';
 
@@ -38,7 +38,6 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
                 )));
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
@@ -50,7 +49,11 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
               const SizedBox(
                 height: 64.0,
               ),
-              TextButton(onPressed: () {Navigator.pop(context);}, child: const Text("Done")),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Done")),
               const SizedBox(
                 height: 128.0,
               ),
@@ -62,20 +65,15 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
               const SizedBox(
                 height: 32.0,
               ),
-              WorkoutTile(
-                  workout: widget.workout,
-                  editTapped: (context) => goToHistoryLog(widget.workout),
-                  deleteTapped: (context) {
-                    // delete workout from DB
-                    db.deleteWorkoutFromDb(widget.workout);
-                    // delete workout from local list
-                  })
+              WorkoutTileStatic(workout: widget.workout)
             ],
           ),
         ),
-        ConfettiWidget(confettiController: controller,
-        shouldLoop: false,
-        blastDirectionality: BlastDirectionality.explosive, )
+        ConfettiWidget(
+          confettiController: controller,
+          shouldLoop: false,
+          blastDirectionality: BlastDirectionality.explosive,
+        )
       ]),
     );
   }
