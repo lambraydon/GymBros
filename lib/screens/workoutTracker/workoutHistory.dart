@@ -23,6 +23,86 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());
 
   // create new workout
+  void workoutOptions() {
+    showDialog(
+        context: context,
+        builder: (context) => Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13)),
+              child: SizedBox(
+                height: 170,
+                width: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: [
+                      const Text("Quick Start",
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: appBarColor)),
+                      SizedBox(height: 24,),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                              createNewWorkout();
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 250,
+                              decoration: BoxDecoration(
+                                color: Colors.lightBlue.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                child: Text(
+                                  "Create Custom Workout",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: appBarColor),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              height: 40,
+                              width: 250,
+                              decoration: BoxDecoration(
+                                color: Colors.lightGreen.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Text(
+                                  "Generate Recommended Workout",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green.shade800),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  // create new workout
   void createNewWorkout() {
     showDialog(
         context: context,
@@ -116,7 +196,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
         backgroundColor: backgroundColor,
         floatingActionButton: FloatingActionButton(
             backgroundColor: appBarColor,
-            onPressed: createNewWorkout,
+            onPressed: workoutOptions,
             child: const Icon(Icons.not_started_outlined)),
         body: ListView.builder(
             itemCount: value.getWorkoutList().length,
