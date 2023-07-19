@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:gymbros/screens/workoutRecommender/recommenderModel.dart';
 import 'package:http/http.dart' as http;
 
-import '../shared/apiConstants.dart';
+import '../screens/workoutRecommender/apiConstants.dart';
 
 class GPTApiService {
-  // Send Message fct
-  static Future<void> sendMessage(
+  static Future<RecommenderModel> sendMessage(
       {required String message, required String modelId}) async {
     try {
+      String newMessage = "$message\n$CONDITION";
       var response = await http.post(
         Uri.parse("$BASE_URL/completions"),
         headers: {
@@ -18,16 +19,16 @@ class GPTApiService {
         },
         body: jsonEncode(
           {
+            "temperature": 0.2,
             "messages": [
               {
                 "role": "system",
-                "content":
-                    "You are a helpful assistant in a Gym Mobile Application that recommends workouts."
+                "content": PROMPT
               },
-              {"role": "user", "content": message}
+              {"role": "user", "content": newMessage}
             ],
             "model": modelId,
-            "max_tokens": 100,
+            "max_tokens": 600,
           },
         ),
       );
@@ -36,13 +37,15 @@ class GPTApiService {
       print(jsonResponse);
 
       if (jsonResponse['error'] != null) {
-        // print("jsonResponse['error'] ${jsonResponse['error']["message"]}");
         throw HttpException(jsonResponse['error']["message"]);
       }
 
       if (jsonResponse["choices"].length > 0) {
-        log("jsonResponse[choices]text ${jsonResponse["choices"][0]["text"]}");
+        log("jsonResponse[choices]text ${jsonResponse['choices'][0]['message']['content']}");
       }
+
+      Map output = jsonDecode(jsonResponse['choices'][0]['message']['content']);
+      return RecommenderModel.fromJson(output);
     } catch (error) {
       log("error $error");
       rethrow;
@@ -52,8 +55,10 @@ class GPTApiService {
 
 void main() async {
   try {
-    await GPTApiService.sendMessage(
-        message: "Recommend me a gym workout", modelId: "gpt-3.5-turbo");
+    RecommenderModel model = await GPTApiService.sendMessage(
+        message: "Recommend me a pull workout", modelId: "gpt-3.5-turbo");
+    print(model.description);
+    print(model.workout.toJson());
   } catch (error) {
     print(error);
   }
