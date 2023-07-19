@@ -36,6 +36,7 @@ class _SetTileState extends State<SetTile> {
 
     super.initState();
   }
+
   @override
   void dispose() {
     weightController.dispose();

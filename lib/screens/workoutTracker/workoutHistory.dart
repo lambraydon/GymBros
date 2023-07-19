@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/workoutRecommender/workoutRecommender.dart';
 import 'package:gymbros/screens/workoutTracker/calendar.dart';
 import 'package:gymbros/screens/workoutTracker/historyLog.dart';
 import 'package:gymbros/screens/workoutTracker/logger.dart';
@@ -41,7 +42,9 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: appBarColor)),
-                      SizedBox(height: 24,),
+                      const SizedBox(
+                        height: 12,
+                      ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -70,9 +73,17 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const WorkoutRecommender()));
+                            },
                             child: Container(
                               height: 40,
                               width: 250,
@@ -81,7 +92,8 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 child: Text(
                                   "Generate Recommended Workout",
                                   style: TextStyle(
