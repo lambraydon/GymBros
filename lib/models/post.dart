@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gymbros/screens/workoutTracker/workout.dart';
 
 class Post {
   final String description;
@@ -9,6 +10,7 @@ class Post {
   final DateTime datePublished;
   final String postUrl;
   final String profImage;
+  final Workout workout;
 
   const Post(
       {required this.description,
@@ -19,6 +21,7 @@ class Post {
         required this.datePublished,
         required this.postUrl,
         required this.profImage,
+        required this.workout
       });
 
   static Post fromSnap(DocumentSnapshot snap) {
@@ -32,7 +35,8 @@ class Post {
         datePublished: snapshot["datePublished"],
         username: snapshot["username"],
         postUrl: snapshot['postUrl'],
-        profImage: snapshot['profImage']
+        profImage: snapshot['profImage'],
+        workout: snapshot['workout']
     );
   }
 
@@ -44,6 +48,7 @@ class Post {
     "postId": postId,
     "datePublished": datePublished,
     'postUrl': postUrl,
-    'profImage': profImage
+    'profImage': profImage,
+    'workout': workout.toJson()
   };
 }

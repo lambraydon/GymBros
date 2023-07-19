@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gymbros/screens/home/pagetoggler.dart';
+import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +10,15 @@ import 'package:gymbros/shared/imageUtil.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NewPost extends StatefulWidget {
-  const NewPost({Key? key}) : super(key: key);
+  final Workout workout;
+  const NewPost({Key? key, required this.workout}) : super(key: key);
 
   @override
   State<NewPost> createState() => _NewPostState();
 }
 
 class _NewPostState extends State<NewPost> {
+  String description = "";
   Uint8List? _file;
   bool isLoading = false;
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());
@@ -33,6 +37,7 @@ class _NewPostState extends State<NewPost> {
         uid,
         username,
         profImage,
+        widget.workout
       );
       if (res == "success") {
         setState(() {
@@ -131,61 +136,89 @@ class _NewPostState extends State<NewPost> {
         child: StreamBuilder<DocumentSnapshot>(
             stream: db.userProfiles.doc(AuthService().getUid()).snapshots(),
             builder: (context, snapshot) {
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
-              return Column(children: [
-                isLoading
-                    ? const LinearProgressIndicator()
-                    : const Padding(padding: EdgeInsets.only(top: 0)),
-                const Divider(),
-                Center(
-                    child: IconButton(
-                  icon: const Icon(Icons.upload),
-                  onPressed: () => selectimage(context),
-                )),
-                /*
-                Row(
-                  children: [
-                    const CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80'),
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            hintText: "Write a caption...",
-                            border: InputBorder.none,
-                          ),
-                          maxLines: 8,
-                        )),
-                    SizedBox(
-                        height: 45.0,
-                        width: 45.0,
-                        child: AspectRatio(
-                            aspectRatio: 487 / 451,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        alignment: FractionalOffset.topCenter,
-                                        image: NetworkImage(
-                                            'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')
-                                        //MemoryImage(_file!)
-                                        ))))),
-                  ],
-                ),
-                */
-                const Divider(),
-                Center(
-                    child: TextButton(
-                  onPressed: () => {postImage(db.uid, userData["Name"], userData['profilephotoURL'])},
-                  child: const Text("Post",
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24)),
-                ))
-              ]);
+              if (snapshot.hasData) {
+                final userData = snapshot.data!.data() as Map<String, dynamic>;
+                return Column(children: [
+                  isLoading
+                      ? const LinearProgressIndicator()
+                      : const Padding(padding: EdgeInsets.only(top: 0)),
+                  const Divider(),
+                  Center(
+                      child: IconButton(
+                    icon: const Icon(Icons.upload),
+                    onPressed: () => selectimage(context),
+                  )),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(userData['profilephotoURL'])
+                      ),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: TextField(
+                            controller: _descController,
+                            decoration: const InputDecoration(
+                              hintText: "Write a caption...",
+                              border: InputBorder.none,
+                            ),
+                            maxLines: 8,
+                          )
+                      ),
+                    ],
+                  ),
+                  _file == null ? SizedBox(
+                      height: 250.0,
+                      width: 250.0,
+                      child: Container(
+                        margin: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.all(3.0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black)
+                        ),
+                        child: const Center(child:Text('Select an Image with the upload button above!', textAlign: TextAlign.center),)),
+                      )
+                   :SizedBox(
+                      height: 250.0,
+                      width: 250.0,
+                      child: AspectRatio(
+                          aspectRatio: 487 / 451,
+                          child:
+                          Container(
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      alignment: FractionalOffset.topCenter,
+                                      image: _file == null ? Image.asset('assets/log.jpg').image : MemoryImage(_file!)
+                                  )
+                              )
+                          )
+                      )
+                  )
+                  ,
+                  const Divider(),
+                  Center(
+                      child: TextButton(
+                    onPressed: () {
+                      postImage(
+                          db.uid, userData["Name"], userData['profilephotoURL']
+                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PageToggler()));
+                    }
+                    ,
+                    child: const Text("Post",
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24)),
+                  ))
+                ]);
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('snapshot error'));
+              } else {
+                return const Center(
+                  child: Text('another Error')
+                );
+              }
             }),
       ),
     );
