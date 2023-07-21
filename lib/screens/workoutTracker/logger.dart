@@ -271,7 +271,7 @@ class _LoggerState extends State<Logger> {
         builder: (context, value, child) => Scaffold(
           backgroundColor: backgroundColor,
           appBar: AppBar(
-            backgroundColor: backgroundColor,
+            flexibleSpace: gradientColor,
             elevation: 0.0,
             automaticallyImplyLeading: false,
             actions: <Widget>[

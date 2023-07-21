@@ -11,6 +11,7 @@ class Post {
   final String postUrl;
   final String profImage;
   final Workout workout;
+  final List<String> taggedUsers;
 
   const Post(
       {required this.description,
@@ -21,7 +22,8 @@ class Post {
         required this.datePublished,
         required this.postUrl,
         required this.profImage,
-        required this.workout
+        required this.workout,
+        required this.taggedUsers
       });
 
   static Post fromSnap(DocumentSnapshot snap) {
@@ -36,7 +38,8 @@ class Post {
         username: snapshot["username"],
         postUrl: snapshot['postUrl'],
         profImage: snapshot['profImage'],
-        workout: snapshot['workout']
+        workout: snapshot['workout'],
+        taggedUsers: snapshot['taggedUsers']
     );
   }
 
@@ -49,6 +52,7 @@ class Post {
     "datePublished": datePublished,
     'postUrl': postUrl,
     'profImage': profImage,
-    'workout': workout.toJson()
+    'workout': workout.toJson(),
+    'taggedUser':taggedUsers
   };
 }

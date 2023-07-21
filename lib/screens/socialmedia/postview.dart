@@ -25,6 +25,7 @@ class PostView extends StatefulWidget {
 
 class _PostViewState extends State<PostView> {
   int _page = 0;
+  String? selectedUser;
   late PageController pageController;
   int commentLen = 0;
   bool isLikeAnimating = false;
@@ -86,11 +87,13 @@ class _PostViewState extends State<PostView> {
 
   @override
   Widget build(BuildContext context) {
+    final List<String>? taggedUsers = (widget.snap['taggedUser'] as List)
+        .map((item) => item as String)
+        ?.toList();
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
-
         children: [
           //Header with Profile Pic + UserName
           Container(
@@ -120,6 +123,26 @@ class _PostViewState extends State<PostView> {
                     ),
                   ),
                 ),
+                (taggedUsers!.length > 0)
+                    ? Expanded(
+                        child: DropdownButton<String>(
+                            hint: const Text(
+                              "tagged users",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            isExpanded: false,
+                            value: selectedUser,
+                            items: taggedUsers?.map((String city) {
+                              return DropdownMenuItem<String>(
+                                value: city,
+                                child: Text(city),
+                              );
+                            }).toList(),
+                            onChanged: (String? newVal) {}),
+                      )
+                    : SizedBox(),
                 widget.snap['uid'] == _db.uid
                     ? IconButton(
                         onPressed: () {
@@ -297,7 +320,7 @@ class _PostViewState extends State<PostView> {
                   padding: const EdgeInsets.only(top: 8),
                   child: RichText(
                     text: TextSpan(
-                        style: const TextStyle(color: Colors.black45),
+                        style: const TextStyle(color: Colors.black),
                         children: [
                           TextSpan(
                             text: widget.snap["username"],
@@ -310,24 +333,32 @@ class _PostViewState extends State<PostView> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CommentPage(
+                          postID: widget.snap['postId'].toString()))),
                   child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: const Text('View all 200 comments',
-                          style:
-                              TextStyle(fontSize: 16, color: Colors.black38))),
+                      child: (commentLen > 0)
+                          ? Text('View all $commentLen comments',
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black38))
+                          : const Text("no comments yet... post one here!")
+                  )
+                      ,
                 ),
                 Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                        DateFormat.yMMMd().format(
-                          widget.snap["datePublished"].toDate(),
-                        ),
-                        style: const TextStyle(
-                            fontSize: 16, color: Colors.black38))),
+                            DateFormat.yMMMd().format(
+                              widget.snap["datePublished"].toDate(),
+                            ),
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.black38)))
+
               ],
             ),
-          )
+          ),
+          const Divider()
         ],
       ),
     );
