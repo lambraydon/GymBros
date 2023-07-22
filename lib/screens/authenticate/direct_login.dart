@@ -107,10 +107,10 @@ class _DirectLogInState extends State<DirectLogIn> {
               const SizedBox(height: 32),
               ElevatedButton(
                   onPressed: () async {
-                    setState(() {
-                      isLoading = true;
-                    });
                     if(_formKey.currentState!.validate()){
+                      setState(() {
+                        isLoading = true;
+                      });
                       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                       if(result == null) {
                         setState(() {
@@ -124,6 +124,7 @@ class _DirectLogInState extends State<DirectLogIn> {
                         Navigator.pop(context);
                       }
                     }
+
                   },
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
