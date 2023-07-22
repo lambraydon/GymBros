@@ -58,7 +58,7 @@ class _CommentPageState extends State<CommentPage> {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
             return Scaffold(
               appBar: AppBar(
-                backgroundColor: backgroundColor,
+                flexibleSpace: gradientColor,
                 title: const Text(
                   'Comments',
                 ),
