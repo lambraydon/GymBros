@@ -25,6 +25,11 @@ class Set {
     return weight * reps;
   }
 
+  // Matt Brzycki 1RM calculator
+  double oneRM() {
+    return (weight / ( 1.0278 - 0.0278 * reps )).roundToDouble();
+  }
+
   @override
   String toString() {
     return "$weight kg × $reps";

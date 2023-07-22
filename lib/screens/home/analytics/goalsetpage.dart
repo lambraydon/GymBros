@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/components/mynumdays.dart';
 import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class GoalSetPage extends StatefulWidget {

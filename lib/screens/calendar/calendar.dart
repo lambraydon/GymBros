@@ -1,6 +1,5 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
+import 'package:gymbros/screens/calendar/calendarUtils.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/shared/constants.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -8,6 +7,7 @@ import '../components/workoutTile.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key, required this.workoutList});
+
   final List<Workout> workoutList;
 
   @override
@@ -29,70 +29,14 @@ class _CalendarState extends State<Calendar> {
     super.initState();
 
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    _selectedEvents = ValueNotifier(
+        CalendarUtils.getEventsForDay(_selectedDay!, widget.workoutList));
   }
 
   @override
   void dispose() {
     _selectedEvents.dispose();
     super.dispose();
-  }
-
-  // Return LinkedHashMap for Calendar
-  LinkedHashMap<DateTime, List<Workout>> initialiseWorkoutMap(List<Workout> workoutList) {
-    Map<DateTime, List<Workout>> temp = {};
-    for (int i = 0; i < workoutList.length; i++) {
-      DateTime index = workoutList[i].start;
-      DateTime key = DateTime(index.year, index.month, index.day);
-      if (temp.containsKey(key)) {
-        List<Workout>? workouts = temp[key];
-        workouts?.add(workoutList[i]);
-        temp.update(key, (value) => workouts!);
-      } else {
-        temp[key] = [workoutList[i]];
-      }
-    }
-    return LinkedHashMap<DateTime, List<Workout>>(
-      equals: isSameDay,
-      hashCode: getHashCode,
-    )..addAll(temp);
-  }
-
-  int getHashCode(DateTime key) {
-    return key.day * 1000000 + key.month * 10000 + key.year;
-  }
-
-  /// Checks if two DateTime objects are the same day.
-  /// Returns `false` if either of them is null.
-  bool isSameDay(DateTime? a, DateTime? b) {
-    if (a == null || b == null) {
-      return false;
-    }
-
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  /// Returns a list of [DateTime] objects from [first] to [last], inclusive.
-  List<DateTime> daysInRange(DateTime first, DateTime last) {
-    final dayCount = last.difference(first).inDays + 1;
-    return List.generate(
-      dayCount,
-          (index) => DateTime(first.year, first.month, first.day + index),
-    );
-  }
-
-  List<Workout> _getEventsForDay(DateTime day) {
-    // Implementation example
-    return initialiseWorkoutMap(widget.workoutList)[day] ?? [];
-  }
-
-  List<Workout> _getEventsForRange(DateTime start, DateTime end) {
-    // Implementation example
-    final days = daysInRange(start, end);
-
-    return [
-      for (final d in days) ..._getEventsForDay(d),
-    ];
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -105,7 +49,8 @@ class _CalendarState extends State<Calendar> {
         _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
 
-      _selectedEvents.value = _getEventsForDay(selectedDay);
+      _selectedEvents.value =
+          CalendarUtils.getEventsForDay(selectedDay, widget.workoutList);
     }
   }
 
@@ -120,11 +65,14 @@ class _CalendarState extends State<Calendar> {
 
     // `start` or `end` could be null
     if (start != null && end != null) {
-      _selectedEvents.value = _getEventsForRange(start, end);
+      _selectedEvents.value =
+          CalendarUtils.getEventsForRange(start, end, widget.workoutList);
     } else if (start != null) {
-      _selectedEvents.value = _getEventsForDay(start);
+      _selectedEvents.value =
+          CalendarUtils.getEventsForDay(start, widget.workoutList);
     } else if (end != null) {
-      _selectedEvents.value = _getEventsForDay(end);
+      _selectedEvents.value =
+          CalendarUtils.getEventsForDay(end, widget.workoutList);
     }
   }
 
@@ -148,7 +96,8 @@ class _CalendarState extends State<Calendar> {
               rangeEndDay: _rangeEnd,
               calendarFormat: _calendarFormat,
               rangeSelectionMode: _rangeSelectionMode,
-              eventLoader: (day) => _getEventsForDay(day),
+              eventLoader: (day) =>
+                  CalendarUtils.getEventsForDay(day, widget.workoutList),
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: const CalendarStyle(
                 // Use `CalendarStyle` to customize the UI
@@ -177,7 +126,7 @@ class _CalendarState extends State<Calendar> {
                     itemBuilder: (context, index) {
                       return WorkoutTile(
                           workout: value[index],
-                          editTapped: (context) {} ,
+                          editTapped: (context) {},
                           deleteTapped: (context) {});
                     },
                   );

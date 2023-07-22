@@ -101,7 +101,7 @@ class _SetTileState extends State<SetTile> {
               const SizedBox(
                 width: 80,
                 child: Text(
-                  "30 kg x 10",
+                  "-",
                   style: TextStyle(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),

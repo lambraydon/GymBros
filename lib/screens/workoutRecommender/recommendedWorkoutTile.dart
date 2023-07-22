@@ -76,9 +76,9 @@ class RecommendedWorkoutTile extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: 173,
-                        child: AutoSizeText(workout.workoutSummary()[index]),
+                        child: AutoSizeText(workout.workoutRecommendSummary()[index]),
                       ),
-                      AutoSizeText(workout.exercises[index].bestSet().toString()),
+                      AutoSizeText(workout.exercises[index].bestRecommendedSet().toString()),
                     ],
                   );
                 },

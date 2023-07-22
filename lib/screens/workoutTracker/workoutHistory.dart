@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/workoutRecommender/workoutRecommender.dart';
-import 'package:gymbros/screens/workoutTracker/calendar.dart';
+import 'package:gymbros/screens/calendar/calendar.dart';
 import 'package:gymbros/screens/workoutTracker/historyLog.dart';
 import 'package:gymbros/screens/workoutTracker/logger.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
@@ -78,6 +78,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
                           ),
                           InkWell(
                             onTap: () {
+                              Navigator.pop(context);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
