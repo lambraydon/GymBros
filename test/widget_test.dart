@@ -4,8 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:gymbros/main.dart';
 import 'package:gymbros/screens/authenticate/log_in.dart';
 import 'package:gymbros/screens/calendar/calendar.dart';
-import 'package:gymbros/screens/components/workoutTile.dart';
-import 'package:gymbros/screens/workoutRecommender/workoutRecommender.dart';
+import 'package:gymbros/screens/components/workout_tile.dart';
+import 'package:gymbros/screens/workoutRecommender/workout_recommender.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import './mock.dart';
 

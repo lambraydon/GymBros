@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/components/likeAnimation.dart';
-import 'package:gymbros/screens/components/workoutTile.dart';
-import 'package:gymbros/screens/components/workoutTileStatic.dart';
-import 'package:gymbros/screens/home/viewprofile.dart';
-import 'package:gymbros/screens/socialmedia/commentpage.dart';
-import 'package:gymbros/screens/workoutTracker/historyLog.dart';
+import 'package:gymbros/screens/components/like_animation.dart';
+import 'package:gymbros/screens/components/workout_tile_static.dart';
+import 'package:gymbros/screens/home/view_profile.dart';
+import 'package:gymbros/screens/socialmedia/comment_page.dart';
+import 'package:gymbros/screens/workoutTracker/history_log.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
-import 'package:gymbros/shared/imageUtil.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_service.dart';
+import 'package:gymbros/shared/image_util.dart';
 import 'package:intl/intl.dart';
 
 class PostView extends StatefulWidget {
@@ -89,7 +88,7 @@ class _PostViewState extends State<PostView> {
   Widget build(BuildContext context) {
     final List<String>? taggedUsers = (widget.snap['taggedUser'] as List)
         .map((item) => item as String)
-        ?.toList();
+        .toList();
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -134,7 +133,7 @@ class _PostViewState extends State<PostView> {
                             ),
                             isExpanded: false,
                             value: selectedUser,
-                            items: taggedUsers?.map((String city) {
+                            items: taggedUsers.map((String city) {
                               return DropdownMenuItem<String>(
                                 value: city,
                                 child: Text(city),

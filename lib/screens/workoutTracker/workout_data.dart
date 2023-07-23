@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/screens/workoutTracker/set.dart';
-import 'package:gymbros/services/databaseservice.dart';
+import 'package:gymbros/services/database_service.dart';
 
-import '../../services/authservice.dart';
+import '../../services/auth_service.dart';
 
 class WorkoutData extends ChangeNotifier {
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
-import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/screens/workoutTracker/workout_complete.dart';
+import 'package:gymbros/screens/workoutTracker/workout_data.dart';
 import 'package:gymbros/shared/constants.dart';
 import 'package:provider/provider.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
-import '../../shared/setTiles.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_service.dart';
+import '../../shared/set_tiles.dart';
 
 class HistoryLog extends StatefulWidget {
   final Workout workout;

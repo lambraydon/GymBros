@@ -3,7 +3,7 @@ import "dart:typed_data";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/models/gbprofile.dart";
 import "package:gymbros/screens/workoutTracker/workout.dart";
-import "package:gymbros/services/databaseStorageService.dart";
+import "package:gymbros/services/database_storage_service.dart";
 import "package:uuid/uuid.dart";
 import "../models/post.dart";
 import "../screens/workoutTracker/exercise.dart";

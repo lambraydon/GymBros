@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/home/viewprofile.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class TagFriendSearchScreen extends StatefulWidget {

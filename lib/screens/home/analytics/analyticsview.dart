@@ -8,8 +8,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../../../shared/constants.dart';
 import '../../calendar/calendar.dart';
-import '../../workoutTracker/gymExerciseList.dart';
-import '../../workoutTracker/workoutData.dart';
+import '../../workoutTracker/gym_exercise_list.dart';
+import '../../workoutTracker/workout_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class AnalyticsView extends StatefulWidget {

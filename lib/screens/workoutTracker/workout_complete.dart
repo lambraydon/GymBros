@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/socialmedia/newpost.dart';
+import 'package:gymbros/screens/socialmedia/new_post.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/screens/workoutTracker/workout_data.dart';
 import 'package:provider/provider.dart';
-import '../../services/authservice.dart';
-import '../../services/databaseservice.dart';
+import '../../services/auth_service.dart';
+import '../../services/database_service.dart';
 import '../../shared/constants.dart';
-import '../components/workoutTile.dart';
-import 'historyLog.dart';
+import '../components/workout_tile.dart';
+import 'history_log.dart';
 import 'package:confetti/confetti.dart';
 
 class WorkoutComplete extends StatefulWidget {

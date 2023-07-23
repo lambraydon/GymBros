@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymbros/shared/constants.dart';
-import 'package:gymbros/shared/customTextButton.dart';
+import 'package:gymbros/shared/custom_text_button.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:async';
 

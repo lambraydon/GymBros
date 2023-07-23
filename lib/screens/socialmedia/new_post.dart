@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
-import 'package:gymbros/screens/home/pagetoggler.dart';
-import 'package:gymbros/screens/socialmedia/tagfriendsearch.dart';
+import 'package:gymbros/screens/home/page_toggler.dart';
+import 'package:gymbros/screens/socialmedia/tag_friend_search.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/shared/constants.dart';
-import 'package:gymbros/shared/imageUtil.dart';
+import 'package:gymbros/shared/image_util.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NewPost extends StatefulWidget {
@@ -40,7 +40,7 @@ class _NewPostState extends State<NewPost> {
     String? taggedFriend = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return TagFriendSearchScreen();
+        return const TagFriendSearchScreen();
       }
     );
     if (taggedFriend != null) {
@@ -57,7 +57,7 @@ class _NewPostState extends State<NewPost> {
         child: ListTile(
           title: Text(item),
           trailing: IconButton(
-            icon: Icon(Icons.remove_circle),
+            icon: const Icon(Icons.remove_circle),
             onPressed: () => _removeItem(_taggedUsers.indexOf(item)),
           ),
         ),
@@ -179,7 +179,7 @@ class _NewPostState extends State<NewPost> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PageToggler()));
+                                builder: (context) => const PageToggler()));
                       },
                       child:
                           const Row(children: [

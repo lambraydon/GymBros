@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/components/mytextfield.dart';
-import 'package:gymbros/screens/workoutTracker/workoutData.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseStorageService.dart';
+import 'package:gymbros/screens/components/my_textfield.dart';
+import 'package:gymbros/screens/workoutTracker/workout_data.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_storage_service.dart';
 import 'package:gymbros/shared/constants.dart';
-import 'package:gymbros/shared/imageUtil.dart';
+import 'package:gymbros/shared/image_util.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:gymbros/screens/components/myedittextfield.dart';
+import 'package:gymbros/screens/components/my_edit_textfield.dart';
 import 'package:provider/provider.dart';
 
 

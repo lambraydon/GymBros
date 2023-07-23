@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/socialmedia/postview.dart';
+import 'package:gymbros/screens/socialmedia/post_view.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class Feed extends StatelessWidget {

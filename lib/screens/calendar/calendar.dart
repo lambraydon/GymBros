@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/calendar/calendarUtils.dart';
+import 'package:gymbros/screens/calendar/calendar_utils.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/shared/constants.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../components/workoutTile.dart';
+import '../components/workout_tile.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key, required this.workoutList});
@@ -81,7 +81,7 @@ class _CalendarState extends State<Calendar> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
-        title: const Text('Calendar-view'),
+        title: const Text('Calendar'),
       ),
       body: Container(
         color: backgroundColor,
