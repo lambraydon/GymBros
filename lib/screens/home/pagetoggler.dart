@@ -43,7 +43,7 @@ class _PageTogglerState extends State<PageToggler> {
       body: PageView(
         controller: pageController,
         onPageChanged: onPageChanged,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         //nest other screen widgets in the children input
         children: [
           Feed(),

@@ -197,7 +197,7 @@ class _WorkoutHistoryState extends State<WorkoutHistory> {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
-            flexibleSpace: gradientColor,
+            backgroundColor: appBarColor,
             title: const Text('Workout History'),
             actions: [
               IconButton(

@@ -1,5 +1,4 @@
-import 'package:gymbros/screens/workoutTracker/set.dart';
-import "package:gymbros/screens/workoutTracker/exercise.dart";
+import 'exercise.dart';
 import 'package:intl/intl.dart';
 
 class Workout {
@@ -63,30 +62,5 @@ class Workout {
     }
 
     return format;
-  }
-
-  static Workout fromJson(Map<String, dynamic> jsonformat) {
-    Workout newWorkout = Workout(
-        name: jsonformat['name'],
-        exercises: []
-    );
-    newWorkout.workoutDurationInSec = jsonformat['workoutDurationInSec'];
-    List<dynamic> exercisesData = jsonformat['exercises'];
-    for (var exerciseData in exercisesData) {
-      Exercise exercise = Exercise(
-          name: exerciseData['name'],
-          sets: []);
-      exerciseData['sets'].forEach((setData) {
-        Set set = Set(
-            index: setData['index'],
-            weight: setData['weight'],
-            reps: setData['reps'],
-            isCompleted: setData['isCompleted']);
-        exercise.sets.add(set);
-      });
-      newWorkout.exercises.add(exercise);
-    }
-
-    return newWorkout;
   }
 }

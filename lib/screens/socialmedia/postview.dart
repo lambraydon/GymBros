@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/components/likeAnimation.dart';
-import 'package:gymbros/screens/components/workoutTile.dart';
-import 'package:gymbros/screens/components/workoutTileStatic.dart';
 import 'package:gymbros/screens/home/viewprofile.dart';
 import 'package:gymbros/screens/socialmedia/commentpage.dart';
-import 'package:gymbros/screens/workoutTracker/historyLog.dart';
-import 'package:gymbros/screens/workoutTracker/workout.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 import 'package:gymbros/shared/imageUtil.dart';
@@ -24,9 +20,6 @@ class PostView extends StatefulWidget {
 }
 
 class _PostViewState extends State<PostView> {
-  int _page = 0;
-  String? selectedUser;
-  late PageController pageController;
   int commentLen = 0;
   bool isLikeAnimating = false;
   final DatabaseService _db = DatabaseService(uid: AuthService().getUid());
@@ -35,26 +28,6 @@ class _PostViewState extends State<PostView> {
   void initState() {
     super.initState();
     fetchCommentLen();
-    pageController = PageController();
-  }
-
-  void goToHistoryLog(Workout workout) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HistoryLog(
-                  workout: workout,
-                )));
-  }
-
-  void navigationTapped(int page) {
-    pageController.jumpToPage(page);
-  }
-
-  void onPageChanged(int page) {
-    setState(() {
-      _page = page;
-    });
   }
 
   deletePost(String postId) async {
@@ -87,9 +60,6 @@ class _PostViewState extends State<PostView> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String>? taggedUsers = (widget.snap['taggedUser'] as List)
-        .map((item) => item as String)
-        ?.toList();
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -123,26 +93,6 @@ class _PostViewState extends State<PostView> {
                     ),
                   ),
                 ),
-                (taggedUsers!.length > 0)
-                    ? Expanded(
-                        child: DropdownButton<String>(
-                            hint: const Text(
-                              "tagged users",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            isExpanded: false,
-                            value: selectedUser,
-                            items: taggedUsers?.map((String city) {
-                              return DropdownMenuItem<String>(
-                                value: city,
-                                child: Text(city),
-                              );
-                            }).toList(),
-                            onChanged: (String? newVal) {}),
-                      )
-                    : SizedBox(),
                 widget.snap['uid'] == _db.uid
                     ? IconButton(
                         onPressed: () {
@@ -218,63 +168,47 @@ class _PostViewState extends State<PostView> {
             ),
           ),
           // Image Body
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            child: PageView(
-              controller: pageController,
-              onPageChanged: onPageChanged,
-              physics: const ScrollPhysics(),
-              children: [
-                GestureDetector(
-                  onDoubleTap: () async {
-                    _db.likePost(
-                      widget.snap['postId'].toString(),
-                      _db.uid,
-                      widget.snap['likes'],
-                    );
+          GestureDetector(
+            onDoubleTap: () async {
+              _db.likePost(
+                widget.snap['postId'].toString(),
+                _db.uid,
+                widget.snap['likes'],
+              );
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(alignment: Alignment.center, children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.35,
+                width: double.infinity,
+                child: Image.network(
+                  widget.snap["postUrl"],
+                  fit: BoxFit.cover,
+                ),
+              ),
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isLikeAnimating ? 1 : 0,
+                child: LikeAnimation(
+                  isAnimating: isLikeAnimating,
+                  duration: const Duration(
+                    milliseconds: 400,
+                  ),
+                  onEnd: () {
                     setState(() {
-                      isLikeAnimating = true;
+                      isLikeAnimating = false;
                     });
                   },
-                  child: Stack(alignment: Alignment.center, children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.35,
-                      width: double.infinity,
-                      child: Image.network(
-                        widget.snap["postUrl"],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: isLikeAnimating ? 1 : 0,
-                      child: LikeAnimation(
-                        isAnimating: isLikeAnimating,
-                        duration: const Duration(
-                          milliseconds: 400,
-                        ),
-                        onEnd: () {
-                          setState(() {
-                            isLikeAnimating = false;
-                          });
-                        },
-                        child: const Icon(
-                          Icons.favorite,
-                          color: Colors.white,
-                          size: 100,
-                        ),
-                      ),
-                    ),
-                  ]),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                    size: 100,
+                  ),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.35,
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: WorkoutTileStatic(
-                      workout: Workout.fromJson(widget.snap['workout'])),
-                ),
-              ],
-            ),
+              ),
+            ]),
           ),
 
           // Like and Comment Bar
@@ -320,7 +254,7 @@ class _PostViewState extends State<PostView> {
                   padding: const EdgeInsets.only(top: 8),
                   child: RichText(
                     text: TextSpan(
-                        style: const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black45),
                         children: [
                           TextSpan(
                             text: widget.snap["username"],
@@ -333,32 +267,24 @@ class _PostViewState extends State<PostView> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CommentPage(
-                          postID: widget.snap['postId'].toString()))),
+                  onTap: () {},
                   child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: (commentLen > 0)
-                          ? Text('View all $commentLen comments',
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.black38))
-                          : const Text("no comments yet... post one here!")
-                  )
-                      ,
+                      child: const Text('View all 200 comments',
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.black38))),
                 ),
                 Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                            DateFormat.yMMMd().format(
-                              widget.snap["datePublished"].toDate(),
-                            ),
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.black38)))
-
+                        DateFormat.yMMMd().format(
+                          widget.snap["datePublished"].toDate(),
+                        ),
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.black38))),
               ],
             ),
-          ),
-          const Divider()
+          )
         ],
       ),
     );
