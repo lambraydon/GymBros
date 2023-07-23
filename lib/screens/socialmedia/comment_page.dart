@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/socialmedia/commentcard.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
+import 'package:gymbros/screens/socialmedia/comment_card.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_service.dart';
 import '../../shared/constants.dart';
-import '../../shared/imageUtil.dart';
+import '../../shared/image_util.dart';
 
 class CommentPage extends StatefulWidget {
-  final postID;
+  final dynamic postID;
   const CommentPage({Key? key, required this.postID}) : super(key: key);
 
   @override

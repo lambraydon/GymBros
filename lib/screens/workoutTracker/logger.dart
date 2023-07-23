@@ -4,16 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:gymbros/screens/workoutTracker/set.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
-import 'package:gymbros/screens/workoutTracker/workoutData.dart';
-import 'package:gymbros/shared/exerciseSearch.dart';
-import 'package:gymbros/shared/restTimer.dart';
-import 'package:gymbros/shared/restTimerDialog.dart';
+import 'package:gymbros/screens/workoutTracker/workout_complete.dart';
+import 'package:gymbros/screens/workoutTracker/workout_data.dart';
+import 'package:gymbros/shared/exercise_search.dart';
+import 'package:gymbros/shared/rest_timer.dart';
+import 'package:gymbros/shared/rest_timer_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_service.dart';
 import '../../shared/constants.dart';
-import '../../shared/setTiles.dart';
+import '../../shared/set_tiles.dart';
 
 class Logger extends StatefulWidget {
   final Workout workout;

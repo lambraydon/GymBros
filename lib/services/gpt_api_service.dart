@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:gymbros/screens/workoutRecommender/recommenderModel.dart';
+import 'package:gymbros/screens/workoutRecommender/recommended_model.dart';
 import 'package:http/http.dart' as http;
 
-import '../screens/workoutRecommender/apiConstants.dart';
+import '../screens/workoutRecommender/api_constants.dart';
 
 class GPTApiService {
   static Future<RecommenderModel> sendMessage(

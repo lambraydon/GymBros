@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/services/authservice.dart';
+import 'package:gymbros/services/auth_service.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class SignIn extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:gymbros/models/gbprofile.dart';
-import 'package:gymbros/services/databaseservice.dart';
-import 'package:gymbros/services/authservice.dart';
+import 'package:gymbros/services/database_service.dart';
+import 'package:gymbros/services/auth_service.dart';
 
 class UserProvider with ChangeNotifier {
   GbProfile? _gbProfile;

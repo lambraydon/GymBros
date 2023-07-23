@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/components/followButton.dart';
-import 'package:gymbros/screens/components/mytextfield.dart';
-import 'package:gymbros/services/authservice.dart';
-import 'package:gymbros/services/databaseservice.dart';
+import 'package:gymbros/screens/components/follow_button.dart';
+import 'package:gymbros/screens/components/my_textfield.dart';
+import 'package:gymbros/services/auth_service.dart';
+import 'package:gymbros/services/database_service.dart';
 import 'package:gymbros/shared/constants.dart';
-import 'package:gymbros/shared/imageUtil.dart';
+import 'package:gymbros/shared/image_util.dart';
 
 class ViewProfile extends StatefulWidget {
   final String uid;

@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:gymbros/screens/home/myprofile.dart';
+import 'package:gymbros/screens/home/my_profile.dart';
 import 'package:gymbros/screens/socialmedia/feed.dart';
-import 'package:gymbros/screens/workoutTracker/workoutHistory.dart';
-
+import 'package:gymbros/screens/workoutTracker/workout_history.dart';
 
 class PageToggler extends StatefulWidget {
   const PageToggler({super.key});
@@ -45,7 +44,7 @@ class _PageTogglerState extends State<PageToggler> {
         onPageChanged: onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
         //nest other screen widgets in the children input
-        children: [
+        children: const [
           Feed(),
           WorkoutHistory(),
           MyProfile()

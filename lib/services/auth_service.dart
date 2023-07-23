@@ -1,6 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:gymbros/models/gbuser.dart";
-import "package:gymbros/services/databaseservice.dart";
+import "package:gymbros/services/database_service.dart";
 
 class AuthService {
 

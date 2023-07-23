@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/workoutRecommender/recommendedWorkoutTile.dart';
-import 'package:gymbros/screens/workoutRecommender/recommenderModel.dart';
+import 'package:gymbros/screens/workoutRecommender/recommended_workout_tile.dart';
+import 'package:gymbros/screens/workoutRecommender/recommended_model.dart';
 import 'package:gymbros/shared/constants.dart';
-import 'package:gymbros/shared/customTextButton.dart';
-import '../../services/GPTApiService.dart';
+import 'package:gymbros/shared/custom_text_button.dart';
+import '../../services/gpt_api_service.dart';
 import '../workoutTracker/set.dart';
 import '../workoutTracker/exercise.dart';
 import '../workoutTracker/workout.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/screens/workoutTracker/workout_data.dart';
 import 'package:gymbros/screens/wrapper.dart';
-import 'package:gymbros/services/authservice.dart';
+import 'package:gymbros/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/models/gbuser.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
       StreamProvider<GbUser?>.value(
         value: AuthService().user,
         initialData: null),
-      ChangeNotifierProvider(create: (context) => WorkoutData()),
-    ],
+      ChangeNotifierProvider(create: (context) =>WorkoutData(),
+      )],
         child: const MaterialApp(
           home: Wrapper(),
       ),

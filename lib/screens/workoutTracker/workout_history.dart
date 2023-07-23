@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/workoutRecommender/workoutRecommender.dart';
+import 'package:gymbros/screens/workoutRecommender/workout_recommender.dart';
 import 'package:gymbros/screens/calendar/calendar.dart';
-import 'package:gymbros/screens/workoutTracker/historyLog.dart';
+import 'package:gymbros/screens/workoutTracker/history_log.dart';
 import 'package:gymbros/screens/workoutTracker/logger.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/screens/workoutTracker/workoutData.dart';
+import 'package:gymbros/screens/workoutTracker/workout_data.dart';
 import 'package:provider/provider.dart';
-import 'package:gymbros/screens/components/workoutTile.dart';
+import 'package:gymbros/screens/components/workout_tile.dart';
 import '../../shared/constants.dart';
-import '../../services/authservice.dart';
-import '../../services/databaseservice.dart';
+import '../../services/auth_service.dart';
+import '../../services/database_service.dart';
 
 class WorkoutHistory extends StatefulWidget {
   const WorkoutHistory({super.key});
@@ -21,7 +21,8 @@ class WorkoutHistory extends StatefulWidget {
 class _WorkoutHistoryState extends State<WorkoutHistory> {
   // text controller
   final newWorkoutNameController = TextEditingController();
-  final DatabaseService db = DatabaseService(uid: AuthService().getUid());
+  late final DatabaseService db = DatabaseService(uid: AuthService().getUid());
+
 
   // create new workout
   void workoutOptions() {

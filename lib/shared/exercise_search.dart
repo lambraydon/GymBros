@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/workoutTracker/exercise.dart';
-import '../screens/workoutTracker/gymExerciseList.dart';
-import '../screens/workoutTracker/workoutData.dart';
+import '../screens/workoutTracker/gym_exercise_list.dart';
+import '../screens/workoutTracker/workout_data.dart';
 
 class ExerciseSearch extends StatefulWidget {
   final void Function(String)? addExercise;
