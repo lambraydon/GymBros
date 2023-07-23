@@ -10,6 +10,7 @@ import '../../services/gpt_api_service.dart';
 import '../workoutTracker/set.dart';
 import '../workoutTracker/exercise.dart';
 import '../workoutTracker/workout.dart';
+import 'package:http/http.dart' as http;
 
 class WorkoutRecommender extends StatefulWidget {
   const WorkoutRecommender({Key? key}) : super(key: key);
@@ -85,11 +86,10 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
 
     // API call to GPT model
     try {
-      log("reached here");
-      model = await GPTApiService.sendMessage(
+      model = await GPTApiService(httpClient: http.Client()).sendMessage(
           message: inputController.text, modelId: "gpt-3.5-turbo");
       log(model.description);
-      log(model.workout.toJson().toString());
+      //log(model.workout.toJson().toString());
     } catch (error) {
       log("reached here error");
       log(error.toString());

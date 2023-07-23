@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,9 +8,14 @@ import 'package:gymbros/main.dart';
 import 'package:gymbros/screens/authenticate/log_in.dart';
 import 'package:gymbros/screens/calendar/calendar.dart';
 import 'package:gymbros/screens/components/workout_tile.dart';
+import 'package:gymbros/screens/workoutRecommender/api_constants.dart';
+import 'package:gymbros/screens/workoutRecommender/recommended_model.dart';
 import 'package:gymbros/screens/workoutRecommender/workout_recommender.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
+import 'package:gymbros/services/gpt_api_service.dart';
 import './mock.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   setupFirebaseAuthMocks();
@@ -181,4 +189,6 @@ void main() {
       expect(find.text('Workout 1'), findsNothing);
     });
   });
+
+
 }

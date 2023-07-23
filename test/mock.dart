@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gymbros/services/auth_service.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:http/http.dart' as http;
 
 typedef Callback = void Function(MethodCall call);
 
@@ -18,6 +19,7 @@ Future<T> neverEndingFuture<T>() async {
     await Future.delayed(const Duration(minutes: 5));
   }
 }
+
 class MockAuthService extends Mock implements AuthService {
   @override
   String getUid() {

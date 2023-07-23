@@ -53,6 +53,7 @@ dependencies:
   animated_text_kit: ^4.2.2
   fl_chart: ^0.63.0
   firebase_core_platform_interface: ^4.8.0
+  mockito: ^5.4.2
 
 
 dev_dependencies:
