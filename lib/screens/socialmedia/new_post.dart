@@ -65,6 +65,12 @@ class _NewPostState extends State<NewPost> {
     );
   }
 
+  void gotoFeedPage() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const PageToggler()));
+  }
 
   void postImage(String uid, String username, String profImage) async {
     setState(() {
@@ -73,6 +79,9 @@ class _NewPostState extends State<NewPost> {
     // start the loading
     try {
       // upload to storage and db
+      if (_file == null) {
+        showSnackBar(context, "No file is uploaded, try Again");
+      }
       String res = await db.uploadPost(_descController.text, _file!, uid,
           username, profImage, widget.workout, _taggedUsers);
       if (res == "success") {
