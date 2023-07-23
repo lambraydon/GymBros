@@ -4,7 +4,6 @@ import 'package:gymbros/screens/home/myprofile.dart';
 import 'package:gymbros/screens/socialmedia/feed.dart';
 import 'package:gymbros/screens/workoutTracker/workoutHistory.dart';
 
-
 class PageToggler extends StatefulWidget {
   const PageToggler({super.key});
 
@@ -46,9 +45,9 @@ class _PageTogglerState extends State<PageToggler> {
         physics: const NeverScrollableScrollPhysics(),
         //nest other screen widgets in the children input
         children: [
-          Feed(),
+          const Feed(),
           WorkoutHistory(),
-          MyProfile()
+          const MyProfile()
         ],
       ),
       bottomNavigationBar: CupertinoTabBar(

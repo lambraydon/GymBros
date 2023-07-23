@@ -21,7 +21,8 @@ class WorkoutHistory extends StatefulWidget {
 class _WorkoutHistoryState extends State<WorkoutHistory> {
   // text controller
   final newWorkoutNameController = TextEditingController();
-  final DatabaseService db = DatabaseService(uid: AuthService().getUid());
+  late final DatabaseService db = DatabaseService(uid: AuthService().getUid());
+
 
   // create new workout
   void workoutOptions() {
