@@ -60,7 +60,7 @@ class _ViewProfileState extends State<ViewProfile> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         title: const Text('View Profile Page'),
-        flexibleSpace: gradientColor,
+        backgroundColor: appBarColor,
         elevation: 0.0,
       ),
       body: StreamBuilder<DocumentSnapshot>(

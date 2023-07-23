@@ -13,8 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:gymbros/screens/components/myedittextfield.dart';
 import 'package:provider/provider.dart';
 
-import 'goalsetpage.dart';
-
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
 
@@ -115,18 +113,15 @@ class _MyProfileState extends State<MyProfile> {
               },
             ),
           ],
-          bottom: TabBar(
+          bottom: const TabBar(
             indicatorColor: Colors.white,
             indicatorWeight: 5,
             tabs: [
-              const Tab(
+              Tab(
                 icon: Icon(Icons.person),
                 text: "Profile",
               ),
-              const Tab(
-                  icon: Icon(Icons.bar_chart),
-                  text: "Progress"
-              )
+              Tab(icon: Icon(Icons.bar_chart), text: "Progress")
             ],
           ),
         ),

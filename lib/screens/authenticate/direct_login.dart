@@ -13,7 +13,6 @@ class DirectLogIn extends StatefulWidget {
 
 class _DirectLogInState extends State<DirectLogIn> {
 
-  bool isLoading = false;
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -24,9 +23,7 @@ class _DirectLogInState extends State<DirectLogIn> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-    ? Container(color: greyColor, child: const Center(child: CircularProgressIndicator()))
-    : Scaffold(
+    return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -108,23 +105,15 @@ class _DirectLogInState extends State<DirectLogIn> {
               ElevatedButton(
                   onPressed: () async {
                     if(_formKey.currentState!.validate()){
-                      setState(() {
-                        isLoading = true;
-                      });
                       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                       if(result == null) {
                         setState(() {
-                          isLoading = false;
                           error = "Invalid User Email and Password!";
                         });
                       } else {
-                        setState(() {
-                          isLoading = false;
-                        });
                         Navigator.pop(context);
                       }
                     }
-
                   },
                   style: ButtonStyle(
                     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),

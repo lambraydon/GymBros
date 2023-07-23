@@ -1,8 +1,5 @@
 import 'dart:typed_data';
-import 'package:flutter/cupertino.dart';
-import 'package:gymbros/screens/home/pagetoggler.dart';
-import 'package:gymbros/screens/socialmedia/tagfriendsearch.dart';
-import 'package:gymbros/screens/workoutTracker/workout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gymbros/services/authservice.dart';
 import 'package:gymbros/services/databaseservice.dart';
 import 'package:flutter/material.dart';
@@ -11,60 +8,17 @@ import 'package:gymbros/shared/imageUtil.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NewPost extends StatefulWidget {
-  final Workout workout;
-  const NewPost({Key? key, required this.workout}) : super(key: key);
+  const NewPost({Key? key}) : super(key: key);
 
   @override
   State<NewPost> createState() => _NewPostState();
 }
 
 class _NewPostState extends State<NewPost> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  final List<String> _taggedUsers = [];
-  String description = "";
   Uint8List? _file;
   bool isLoading = false;
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());
   final TextEditingController _descController = TextEditingController();
-
-  void _removeItem(int index) {
-    if (_taggedUsers.isNotEmpty) {
-      _listKey.currentState?.removeItem(
-        index,
-            (context, animation) => _buildItem(_taggedUsers.removeAt(index), animation),
-      );
-    }
-  }
-
-  void _showTagFriendSearch(BuildContext context) async {
-    String? taggedFriend = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return TagFriendSearchScreen();
-      }
-    );
-    if (taggedFriend != null) {
-      int index = _taggedUsers.length;
-      _taggedUsers.add(taggedFriend);
-      _listKey.currentState?.insertItem(index);
-    }
-  }
-
-  Widget _buildItem(String item, Animation<double> animation) {
-    return SizeTransition(
-      sizeFactor: animation,
-      child: Card(
-        child: ListTile(
-          title: Text(item),
-          trailing: IconButton(
-            icon: Icon(Icons.remove_circle),
-            onPressed: () => _removeItem(_taggedUsers.indexOf(item)),
-          ),
-        ),
-      ),
-    );
-  }
-
 
   void postImage(String uid, String username, String profImage) async {
     setState(() {
@@ -73,8 +27,13 @@ class _NewPostState extends State<NewPost> {
     // start the loading
     try {
       // upload to storage and db
-      String res = await db.uploadPost(_descController.text, _file!, uid,
-          username, profImage, widget.workout, _taggedUsers);
+      String res = await db.uploadPost(
+        _descController.text,
+        _file!,
+        uid,
+        username,
+        profImage,
+      );
       if (res == "success") {
         setState(() {
           isLoading = false;
@@ -156,157 +115,79 @@ class _NewPostState extends State<NewPost> {
   Widget build(BuildContext context) {
     //for avatar to show current users profile picture (implement later)
 
-    return StreamBuilder(
-        stream: db.userProfiles.doc(AuthService().getUid()).snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final userData = snapshot.data!.data() as Map<String, dynamic>;
-            return Scaffold(
-              appBar: AppBar(
-                flexibleSpace: gradientColor,
-                leading: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                title: const Text("Share Workout"),
-                centerTitle: false,
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        postImage(db.uid, userData["Name"],
-                            userData['profilephotoURL']);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PageToggler()));
-                      },
-                      child:
-                          const Row(children: [
-                            Text("Post",
-                            style: TextStyle(color: Colors.white, fontSize: 20), ),
-                            Icon(Icons.add, color: Colors.white,)
-                          ])
-                  )
-                ],
-              ),
-              body: Container(
-                  color: backgroundColor,
-                  child: Column(children: [
-                    isLoading
-                        ? const LinearProgressIndicator()
-                        : const Padding(padding: EdgeInsets.only(top: 0)),
-                    const Divider(),
-                    _file == null
-                        ? Stack(children: [
-                            SizedBox(
-                              height: 250.0,
-                              width: 250.0,
-                              child: Container(
-                                  margin: const EdgeInsets.all(15.0),
-                                  padding: const EdgeInsets.all(3.0),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.black54),
-                                      borderRadius: BorderRadius.circular(6)),
-                                  child: const Center(
-                                    child: Text(
-                                        'Select an Image with the upload button above!',
-                                        textAlign: TextAlign.center),
-                                  )),
-                            ),
-                            SizedBox(
-                              height: 160.0,
-                              width: 250.0,
-                              child: Center(
-                                  child: IconButton(
-                                icon: const Icon(Icons.upload),
-                                onPressed: () => selectimage(context),
-                              )),
-                            ),
-                          ])
-                        : SizedBox(
-                            height: 250.0,
-                            width: 250.0,
-                            child: AspectRatio(
-                                aspectRatio: 487 / 451,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            alignment:
-                                                FractionalOffset.topCenter,
-                                            image: _file == null
-                                                ? Image.asset('assets/log.jpg')
-                                                    .image
-                                                : MemoryImage(_file!)))))),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(userData['profilephotoURL'])),
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(
-                                      color: Colors.black54,
-                                    )),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: TextField(
-                                    controller: _descController,
-                                    decoration: const InputDecoration(
-                                      hintText: "Write a caption...",
-                                      border: InputBorder.none,
-                                    ),
-                                    maxLines: 4,
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: AnimatedList(
-                        key: _listKey,
-                        initialItemCount: _taggedUsers.length,
-                        itemBuilder: (context, index, animation) {
-                          return _buildItem(_taggedUsers[index], animation);
-                        },
-                      ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: appBarColor,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        title: const Text("Share Workout"),
+        centerTitle: false,
+      ),
+      body: Container(
+        color: backgroundColor,
+        child: StreamBuilder<DocumentSnapshot>(
+            stream: db.userProfiles.doc(AuthService().getUid()).snapshots(),
+            builder: (context, snapshot) {
+              final userData = snapshot.data!.data() as Map<String, dynamic>;
+              return Column(children: [
+                isLoading
+                    ? const LinearProgressIndicator()
+                    : const Padding(padding: EdgeInsets.only(top: 0)),
+                const Divider(),
+                Center(
+                    child: IconButton(
+                  icon: const Icon(Icons.upload),
+                  onPressed: () => selectimage(context),
+                )),
+                /*
+                Row(
+                  children: [
+                    const CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80'),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.40,
-                      child: ElevatedButton(
-                          onPressed: () => _showTagFriendSearch(context),
-                          //Navigator.of(context).push(MaterialPageRoute(
-                          //builder: (context) => const SearchScreen())),
-                          child: const Row(
-                            children: [
-                              Text('Tag a GymBro!'),
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(CupertinoIcons.person_add),
-                              )
-                            ],
-                          )),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height*0.1,)
-                  ])),
-            );
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('snapshot error'));
-          } else {
-            return const Center(child: Text('another Error'));
-          }
-        });
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: "Write a caption...",
+                            border: InputBorder.none,
+                          ),
+                          maxLines: 8,
+                        )),
+                    SizedBox(
+                        height: 45.0,
+                        width: 45.0,
+                        child: AspectRatio(
+                            aspectRatio: 487 / 451,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        alignment: FractionalOffset.topCenter,
+                                        image: NetworkImage(
+                                            'https://images.unsplash.com/photo-1687054232652-f12bc731b2a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80')
+                                        //MemoryImage(_file!)
+                                        ))))),
+                  ],
+                ),
+                */
+                const Divider(),
+                Center(
+                    child: TextButton(
+                  onPressed: () => {postImage(db.uid, userData["Name"], userData['profilephotoURL'])},
+                  child: const Text("Post",
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24)),
+                ))
+              ]);
+            }),
+      ),
+    );
   }
 }
