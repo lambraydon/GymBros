@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/home/view_profile.dart';
@@ -24,7 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: searchController,
               decoration:
                   const InputDecoration(labelText: 'Search for a user...'),
-              onFieldSubmitted: (String _) {
+              onChanged: (String _) {
                 setState(() {
                   isShowUsers = true;
                 });

@@ -6,7 +6,7 @@ import 'package:gymbros/screens/authenticate/direct_login.dart';
 import 'package:gymbros/screens/authenticate/sign_in.dart';
 import 'package:gymbros/screens/workoutTracker/logger.dart';
 import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/screens/workoutTracker/workoutComplete.dart';
+import 'package:gymbros/screens/workoutTracker/workout_Complete.dart';
 import 'package:integration_test/integration_test.dart';
 import '../test/mock.dart';
 

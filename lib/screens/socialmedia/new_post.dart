@@ -200,14 +200,11 @@ class _NewPostState extends State<NewPost> {
                     _file == null
                         ? Stack(children: [
                             SizedBox(
-                              height: 250.0,
-                              width: 250.0,
+                              height: 200.0,
+                              width: 200.0,
                               child: Container(
                                   margin: const EdgeInsets.all(15.0),
                                   padding: const EdgeInsets.all(3.0),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.black54),
-                                      borderRadius: BorderRadius.circular(6)),
                                   child: const Center(
                                     child: Text(
                                         'Select an Image with the upload button above!',
@@ -215,8 +212,8 @@ class _NewPostState extends State<NewPost> {
                                   )),
                             ),
                             SizedBox(
-                              height: 160.0,
-                              width: 250.0,
+                              height: 130.0,
+                              width: 200.0,
                               child: Center(
                                   child: IconButton(
                                 icon: const Icon(Icons.upload),
@@ -273,15 +270,6 @@ class _NewPostState extends State<NewPost> {
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: AnimatedList(
-                        key: _listKey,
-                        initialItemCount: _taggedUsers.length,
-                        itemBuilder: (context, index, animation) {
-                          return _buildItem(_taggedUsers[index], animation);
-                        },
-                      ),
-                    ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.40,
                       child: ElevatedButton(
@@ -298,8 +286,18 @@ class _NewPostState extends State<NewPost> {
                             ],
                           )),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height*0.1,)
+                    Expanded(
+                      child: AnimatedList(
+                        key: _listKey,
+                        initialItemCount: _taggedUsers.length,
+                        itemBuilder: (context, index, animation) {
+                          return _buildItem(_taggedUsers[index], animation);
+                        },
+                      ),
+                    ),
+
+                    //SizedBox(width: MediaQuery.of(context).size.width,
+                    //height: MediaQuery.of(context).size.height*0.1,)
                   ])),
             );
           } else if (snapshot.hasError) {
