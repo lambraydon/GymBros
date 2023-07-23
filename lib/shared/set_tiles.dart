@@ -26,6 +26,9 @@ class _SetTileState extends State<SetTile> {
   final FocusNode _weightFocusNode = FocusNode();
   final FocusNode _repFocusNode = FocusNode();
 
+  final FilteringTextInputFormatter _inputFormatter =
+  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}$'));
+
   @override
   void initState() {
     if (widget.set.isCompleted) {
@@ -98,11 +101,13 @@ class _SetTileState extends State<SetTile> {
                   ),
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 width: 80,
                 child: Text(
-                  "-",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  widget.set.reps > 0
+                  ? "${(widget.set.weight / ( 1.0278 - 0.0278 * widget.set.reps)).roundToDouble()}"
+                  : "0.0",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -142,7 +147,10 @@ class _SetTileState extends State<SetTile> {
                       color: Colors.grey,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: <TextInputFormatter>[
+                    _inputFormatter,
+                  ],
                   onTap: () {
                     weightController.selection = TextSelection(
                       baseOffset: 0,
@@ -262,3 +270,5 @@ class _SetTileState extends State<SetTile> {
     );
   }
 }
+
+

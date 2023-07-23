@@ -176,6 +176,7 @@ class _NewPostState extends State<NewPost> {
                       onPressed: () {
                         postImage(db.uid, userData["Name"],
                             userData['profilephotoURL']);
+                        Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(

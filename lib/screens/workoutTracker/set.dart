@@ -1,7 +1,7 @@
 class Set {
   final int index;
-  double weight;
-  int reps;
+  double weight = 0;
+  int reps = 0;
   bool isCompleted = false;
 
   Set({

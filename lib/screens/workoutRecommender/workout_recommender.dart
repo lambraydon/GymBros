@@ -142,6 +142,7 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: TextField(
+                      maxLength: 150,
                       controller: inputController,
                       focusNode: _focusNode,
                       style: TextStyle(
@@ -150,8 +151,8 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
                       decoration: InputDecoration(
                         fillColor: filled,
                         filled: true,
-                        hintText: hintText,
-                        hintMaxLines: 4,
+                        hintText: "GymBot recommends you a workout based on what you key in \n\nE.g: $hintText",
+                        hintMaxLines: 6,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),

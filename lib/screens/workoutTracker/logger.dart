@@ -402,7 +402,7 @@ class _LoggerState extends State<Logger> {
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      "Best Set",
+                                      "1RM",
                                       style: TextStyle(
                                           fontWeight: FontWeight.w800),
                                       textAlign: TextAlign.center,
