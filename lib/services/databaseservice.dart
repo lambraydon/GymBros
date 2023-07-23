@@ -86,6 +86,9 @@ class DatabaseService {
       // update workoutDurationInSec
       workout.workoutDurationInSec = workoutSnapshot['workoutDurationInSec'];
 
+      // update workoutID
+      workout.workoutId = workoutSnapshot["workoutId"];
+
       // update DateTime
       workout.setDateTime(workoutSnapshot['start'].toDate());
 

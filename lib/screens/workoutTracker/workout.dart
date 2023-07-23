@@ -60,6 +60,7 @@ class Workout {
       "name": name,
       "start": start,
       "workoutDurationInSec": workoutDurationInSec,
+      "workoutId": workoutId,
       "exercises": exercises.map((exercise) => exercise.toJson()).toList()
     };
   }
