@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +9,7 @@ import 'package:integration_test/integration_test.dart';
 void main() async{
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  log("Firebase Init");
 
   // Tests will go here...
   testWidgets(
@@ -21,6 +24,8 @@ void main() async{
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(ElevatedButton));
+
+      await tester.pumpAndSettle();
 
       // This is the text displayed by an error message on the TextFormField
       expect(find.text('Enter a username'), findsOneWidget);
