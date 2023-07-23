@@ -1,27 +1,36 @@
-# codemagic.yaml
-
-# Define the workflows for your CI/CD pipeline
 workflows:
-  # Primary workflow, triggered on each push to the default branch
-  primary:
-    name: Automated Tests Workflow
-    # Set the Flutter version to use for the build (optional)
+  my-workflow:
+    name: Default Workflow
+    labels:
+      - QA
+      - ${TENANT_NAME}
+    instance_type: mac_mini_m1
+    max_build_duration: 60
     environment:
-      flutter: latest
-
-    # Configure the build steps
-    # The script section defines the commands to execute during the build process
-    script:
-      # Fetch Flutter dependencies
-      - flutter pub get
-      # Run unit tests
-      - flutter test
-      # Run integration tests on Android (adjust file paths accordingly)
-      - flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d emulator-5554
-      # Run integration tests on iOS (uncomment and adjust file paths and device name accordingly)
-      # - flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d "iPhone 12"
-
-      # Build the APK for Android (Optional, customize as needed)
-      - flutter build apk
-      # Build the iOS app (Optional, customize as needed)
-      - flutter build ios
+      flutter: stable
+      xcode: latest
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+      cancel_previous_builds: false
+    scripts:
+      - name: Unit tests
+        script: |
+          mkdir -p test-results
+          flutter test --machine > test-results/flutter.json
+        test_report: test-results/flutter.json
+      - name: Integration tests
+        script: |
+          mkdir -p test-results 
+          flutter -d emulator-5554 test --machine > test-results/flutter.json integration_test 
+          # for iOS use: -d iPhone
+        test_report: test-results/flutter.json
+    artifacts:
+      - build/**/outputs/bundle/**/*.aab
