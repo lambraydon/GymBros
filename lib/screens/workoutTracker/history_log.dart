@@ -8,6 +8,7 @@ import 'package:gymbros/shared/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:gymbros/services/auth_service.dart';
 import 'package:gymbros/services/database_service.dart';
+import '../../shared/exercise_search.dart';
 import '../../shared/set_tiles.dart';
 
 class HistoryLog extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HistoryLog extends State<HistoryLog> {
   //Global key for animated list
   final GlobalKey<AnimatedListState> _key1 = GlobalKey();
   final List<GlobalKey<AnimatedListState>> _listKeys =
-  List.generate(100, (index) => GlobalKey());
+      List.generate(100, (index) => GlobalKey());
 
   // Checkbox was tapped
   void onCheckBoxChanged(Set set) {
@@ -41,39 +42,10 @@ class _HistoryLog extends State<HistoryLog> {
   final weightController = TextEditingController();
   final repsController = TextEditingController();
 
-  // Create a new exercise
-  void createNewExercise() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Add a new exercise"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // exercise name
-              TextField(
-                  controller: exerciseNameController,
-                  decoration: textInputDecoration2("Exercise Name"))
-            ],
-          ),
-          actions: [
-            // save button
-            MaterialButton(
-              onPressed: saveExercise,
-              child: const Text("save"),
-            ),
-            // cancel button
-            MaterialButton(
-              onPressed: cancelExercise,
-              child: const Text("cancel"),
-            )
-          ],
-        ));
-  }
+
 
   // save exercise name
-  void saveExercise() {
-    String newExerciseName = exerciseNameController.text;
+  void saveExercise(String newExerciseName) {
     // create new exercise object with empty sets
     Exercise exercise = Exercise(name: newExerciseName, sets: []);
 
@@ -89,13 +61,6 @@ class _HistoryLog extends State<HistoryLog> {
     // animation
     _key1.currentState!
         .insertItem(numExercise - 1, duration: const Duration(seconds: 1));
-  }
-
-  // cancel workout
-  void cancelExercise() {
-    // pop dialog box
-    Navigator.pop(context);
-    clearExercise();
   }
 
   // clear controller
@@ -123,8 +88,19 @@ class _HistoryLog extends State<HistoryLog> {
         context,
         MaterialPageRoute(
             builder: (context) => WorkoutComplete(
-              workout: workout,
-            )));
+                  workout: workout,
+                )));
+  }
+
+
+  // display exercise search
+  void exerciseSearchDialog() {
+    showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return ExerciseSearch(addExercise: saveExercise);
+            }));
   }
 
   void unfocusTextField() {
@@ -141,12 +117,17 @@ class _HistoryLog extends State<HistoryLog> {
         builder: (context, value, child) => Scaffold(
           backgroundColor: backgroundColor,
           appBar: AppBar(
-            flexibleSpace: gradientColor,
+            backgroundColor: backgroundColor,
             elevation: 0.0,
             automaticallyImplyLeading: false,
             actions: <Widget>[
               TextButton(
-                onPressed: () {Navigator.pop(context);},
+                onPressed: () {
+                  // update workout in DB
+                  widget.db.updateWorkoutInDb(widget.workout);
+
+                  Navigator.pop(context);
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 12.0),
@@ -207,7 +188,7 @@ class _HistoryLog extends State<HistoryLog> {
                         children: <Widget>[
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 16.0),
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -251,7 +232,7 @@ class _HistoryLog extends State<HistoryLog> {
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      "Best Set",
+                                      "1RM (kg)",
                                       style: TextStyle(
                                           fontWeight: FontWeight.w800),
                                       textAlign: TextAlign.center,
@@ -297,7 +278,7 @@ class _HistoryLog extends State<HistoryLog> {
                               shrinkWrap: true,
                               physics: const ClampingScrollPhysics(),
                               initialItemCount:
-                              widget.workout.exercises[index].sets.length,
+                                  widget.workout.exercises[index].sets.length,
                               itemBuilder: (context, int num, animation) {
                                 return SizeTransition(
                                   sizeFactor: animation,
@@ -316,7 +297,7 @@ class _HistoryLog extends State<HistoryLog> {
                                 vertical: 8, horizontal: 16.0),
                             child: Padding(
                               padding:
-                              const EdgeInsets.symmetric(horizontal: 6),
+                                  const EdgeInsets.symmetric(horizontal: 6),
                               child: InkWell(
                                 onTap: () {
                                   saveSet(widget.workout.exercises[index]);
@@ -356,10 +337,10 @@ class _HistoryLog extends State<HistoryLog> {
               ),
               Padding(
                 padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16.0),
                 child: InkWell(
                   onTap: () {
-                    createNewExercise();
+                    exerciseSearchDialog();
                   },
                   child: Container(
                     height: 32,
@@ -378,6 +359,9 @@ class _HistoryLog extends State<HistoryLog> {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(
+                height: 32,
               ),
             ],
           ),

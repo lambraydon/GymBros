@@ -63,6 +63,23 @@ class DatabaseService {
     await workoutRef.set(workout.toJson());
   }
 
+
+  // Function to update a workout in the Firestore database
+  void updateWorkoutInDb(Workout workout) async {
+    // Replace 'workoutId' with the ID of the workout you want to update
+    DocumentReference workoutRef =
+    userProfiles.doc(uid).collection("workouts").doc(workout.workoutId);
+
+    try {
+      await workoutRef.update(workout.toJson());
+
+      print('Workout updated successfully.');
+    } catch (e) {
+      print('Error updating workout: $e');
+    }
+  }
+
+
   void deleteWorkoutFromDb(Workout workout) async {
     await userProfiles
         .doc(uid)

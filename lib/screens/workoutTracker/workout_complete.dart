@@ -44,8 +44,8 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
         context,
         MaterialPageRoute(
             builder: (context) => NewPost(
-              workout: workout,
-            )));
+                  workout: workout,
+                )));
   }
 
   @override
@@ -59,15 +59,13 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
               const SizedBox(
                 height: 64.0,
               ),
-              TextButton(onPressed: () {Navigator.pop(context);}, child: const Text("Done")),
-              TextButton(onPressed: () {goToNewPost(widget.workout);}, child: const Text("Share your workout!")),
-              const SizedBox(
-                height: 128.0,
-              ),
-              const Text(
-                "Congratulations on Completing your Workout!",
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 24.0),
-                textAlign: TextAlign.center,
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Workout Completed!",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(
                 height: 32.0,
@@ -79,13 +77,65 @@ class _WorkoutCompleteState extends State<WorkoutComplete> {
                     // delete workout from DB
                     db.deleteWorkoutFromDb(widget.workout);
                     // delete workout from local list
-                  })
+                  }),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 120,
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      decoration: BoxDecoration(
+                        color: greyColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Skip",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      goToNewPost(widget.workout);
+                    },
+                    child: Container(
+                      width: 120,
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      decoration: BoxDecoration(
+                        color: appBarColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        "Share Workout",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                ],
+              )
             ],
           ),
         ),
-        ConfettiWidget(confettiController: controller,
-        shouldLoop: false,
-        blastDirectionality: BlastDirectionality.explosive, )
+        ConfettiWidget(
+          confettiController: controller,
+          shouldLoop: false,
+          blastDirectionality: BlastDirectionality.explosive,
+        )
       ]),
     );
   }

@@ -352,6 +352,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                   ),
                 ),
                 SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [

@@ -4,9 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gymbros/main.dart';
 import 'package:gymbros/screens/authenticate/direct_login.dart';
 import 'package:gymbros/screens/authenticate/sign_in.dart';
-import 'package:gymbros/screens/workoutTracker/logger.dart';
-import 'package:gymbros/screens/workoutTracker/workout.dart';
-import 'package:gymbros/screens/workoutTracker/workout_Complete.dart';
 import 'package:integration_test/integration_test.dart';
 import '../test/mock.dart';
 
@@ -16,9 +13,8 @@ void main() async {
 
   setUpAll(() async {
     await Firebase.initializeApp();
-    Workout testWorkout = Workout(name: "TestWorkout", exercises: []);
   });
-  // Tests will go here..
+
   testWidgets(
       "Navigating to the sign up page, attempting to sign up without providing information will return and error",
       (WidgetTester tester) async {
