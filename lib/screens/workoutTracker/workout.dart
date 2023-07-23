@@ -29,9 +29,29 @@ class Workout {
     this.workoutId = workoutId;
   }
 
-  // update workout ID
+  // update workout date
   void setDateTime(DateTime day) {
     start = day;
+  }
+
+  // get total volume of workout
+  double volume() {
+    double volume = 0;
+
+    for (var exercise in exercises) {
+      volume += exercise.volume();
+    }
+
+    return volume;
+  }
+
+  // filter out empty exercises
+  void filter() {
+    for (var exercise in exercises) {
+      if (exercise.isEmpty()) {
+        exercises.remove(exercise);
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +65,10 @@ class Workout {
 
   List<String> workoutSummary() {
     return exercises.map((exercise) => exercise.toString()).toList();
+  }
+
+  List<String> workoutRecommendSummary() {
+    return exercises.map((exercise) => exercise.toRecommendString()).toList();
   }
 
   String formatDate() {

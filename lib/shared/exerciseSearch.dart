@@ -1,8 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../screens/workoutTracker/exercise.dart';
 import '../screens/workoutTracker/gymExerciseList.dart';
+import '../screens/workoutTracker/workoutData.dart';
 
 class ExerciseSearch extends StatefulWidget {
   final void Function(String)? addExercise;
+
   const ExerciseSearch({Key? key, required this.addExercise}) : super(key: key);
 
   @override
@@ -11,26 +17,31 @@ class ExerciseSearch extends StatefulWidget {
 
 class _ExerciseSearchState extends State<ExerciseSearch> {
   // This list holds the data for the list view
-  List<Map<String, dynamic>> exerciseList =
-      gymExercises.map((e) => {"name": e, "history": []}).toList();
-  List<Map<String, dynamic>> _foundExercises = [];
+  List<Map<String, List<Exercise>>> exerciseList = [];
+  List<Map<String, List<Exercise>>> _foundExercises = [];
 
   @override
   initState() {
-    // at the beginning, all users are shown
-    _foundExercises = exerciseList;
+    // at the beginning, all exercises are shown
+    try {
+      exerciseList = ExerciseData.initialiseExerciseList(
+          Provider.of<WorkoutData>(context, listen: false).workoutList);
+      _foundExercises = exerciseList;
+    } catch (e) {
+      log(e.toString());
+    }
     super.initState();
   }
 
   // This function is called whenever the text field changes
   void _runFilter(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
+    List<Map<String, List<Exercise>>> results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
       results = exerciseList;
     } else {
       results = exerciseList
-          .where((exercise) => exercise["name"]
+          .where((exercise) => exercise["name"]![0].name
               .toLowerCase()
               .contains(enteredKeyword.toLowerCase()))
           .toList();
@@ -67,10 +78,14 @@ class _ExerciseSearchState extends State<ExerciseSearch> {
                       itemCount: _foundExercises.length,
                       itemBuilder: (context, index) => InkWell(
                         onTap: () {
-                          widget.addExercise!(_foundExercises[index]['name']);
+                          widget
+                              .addExercise!(_foundExercises[index]['name']![0].name);
                         },
                         child: ListTile(
-                          title: Text(_foundExercises[index]['name']),
+                          title: Text(_foundExercises[index]['name']![0].name),
+                          subtitle: Text(_foundExercises[index]['history']!
+                              .length
+                              .toString()),
                         ),
                       ),
                     )

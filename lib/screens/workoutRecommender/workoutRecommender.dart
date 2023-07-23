@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/workoutRecommender/recommendedWorkoutTile.dart';
@@ -18,7 +20,7 @@ class WorkoutRecommender extends StatefulWidget {
 
 class _WorkoutRecommenderState extends State<WorkoutRecommender> {
   TextEditingController inputController = TextEditingController();
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   bool _isLoading = false;
   bool _showNewWidget = false;
@@ -81,23 +83,21 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
       _isLoading = true;
     });
 
-    print(inputController.text);
-
     // API call to GPT model
     try {
-      print("reached here");
+      log("reached here");
       model = await GPTApiService.sendMessage(
           message: inputController.text, modelId: "gpt-3.5-turbo");
-      print(model.description);
-      print(model.workout.toJson());
+      log(model.description);
+      log(model.workout.toJson().toString());
     } catch (error) {
-      print("reached here error");
-      print(error);
+      log("reached here error");
+      log(error.toString());
     }
 
     setState(() {
       description =
-          "${model.description}\n\n Click on the tile below to begin your workout!";
+          "${model.description}\n\nClick on the tile below to begin your workout!";
       workoutTile = RecommendedWorkoutTile(workout: model.workout);
       _isLoading = false;
       _showNewWidget = true;
@@ -131,13 +131,12 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
                   const SizedBox(
                     height: 10,
                   ),
-                  ClipOval(
-                    child: Image.network(
-                      'https://cdn-icons-png.flaticon.com/128/8943/8943377.png',
-                      // Replace with your image URL
-                      width: 80, // Set your desired width
-                      height: 80, // Set your desired height
-                      fit: BoxFit.cover, // Set the image fitting mode
+                  const ClipOval(
+                    child: Image(
+                      image: AssetImage("assets/chatbot.png"),
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Padding(

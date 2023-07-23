@@ -67,7 +67,7 @@ class WorkoutTile extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.bar_chart, color: Colors.grey.shade600,),
-                      const AutoSizeText(" 30 kg"),
+                      AutoSizeText("${workout.volume().toString()} kg"),
                     ],
                   ),
                   const SizedBox(

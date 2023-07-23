@@ -1,3 +1,4 @@
+import "dart:developer";
 import "dart:typed_data";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:gymbros/models/gbprofile.dart";
@@ -28,7 +29,7 @@ class DatabaseService {
       "Following": [],
       "profilephotoURL":
           'https://firebasestorage.googleapis.com/v0/b/gymbros-1d655.appspot.com/o/profilepics%2Fdefault_profile_pic.jpg?alt=media&token=419518ee-0ddc-4590-943d-62b87bd9c611'
-    }).catchError((error) => print("Failed to create user: $error"));
+    }).catchError((error) => log("Failed to create user: $error"));
   }
 
   Future<void> editUserProfile(
@@ -41,7 +42,7 @@ class DatabaseService {
       "Followers": [],
       "Following": [],
       "profilephotoURL": photoURL
-    }).catchError((error) => print("Failed to create user: $error"));
+    }).catchError((error) => log("Failed to create user: $error"));
   }
 
   //get GbProfile Details
@@ -133,6 +134,46 @@ class DatabaseService {
     return workoutList;
   }
 
+  // get workout frequency from db
+  Future<int> getWorkoutFrequencyFromDb() async {
+    try {
+      DocumentSnapshot documentSnapshot = await userProfiles.doc(uid).get();
+
+      // Check if the document exists and contains the freq field
+      if (documentSnapshot.exists && documentSnapshot.data() != null) {
+        // Access the "name" field from the document data
+        int freq = int.parse(documentSnapshot.get('Workout Frequency'));
+        return freq;
+      } else {
+        // Document does not exist or does not have the "name" field
+        return 0;
+      }
+    } catch (e) {
+      log('Error retrieving Workout Frequency from Firestore: $e');
+      return 0;
+    }
+  }
+
+  // get workout duration from db
+  Future<int> getWorkoutLengthFromDb() async {
+    try {
+      DocumentSnapshot documentSnapshot = await userProfiles.doc(uid).get();
+
+      // Check if the document exists and contains the len field
+      if (documentSnapshot.exists && documentSnapshot.data() != null) {
+        // Access the "name" field from the document data
+        int freq = int.parse(documentSnapshot.get('Workout Length'));
+        return freq;
+      } else {
+        // Document does not exist or does not have the "name" field
+        return 0;
+      }
+    } catch (e) {
+      log('Error retrieving Workout Length from Firestore: $e');
+      return 0;
+    }
+  }
+
   Future<String> uploadPost(String description, Uint8List file, String uid,
       String username, String profImage) async {
     // asking uid here because we dont want to make extra calls to firebase auth when we can just get from our state management
@@ -153,7 +194,7 @@ class DatabaseService {
       );
       _firestore.collection('posts').doc(postId).set(post.toJson());
       res = "success";
-      print("Post Uploaded!");
+      log("Post Uploaded!");
     } catch (err) {
       res = err.toString();
     }
@@ -247,7 +288,7 @@ class DatabaseService {
         });
       }
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 }
