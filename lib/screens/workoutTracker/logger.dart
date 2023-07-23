@@ -272,7 +272,7 @@ class _LoggerState extends State<Logger> {
           backgroundColor: backgroundColor,
           appBar: AppBar(
             backgroundColor: backgroundColor,
-            elevation: 0.0,
+            elevation: 0,
             automaticallyImplyLeading: false,
             actions: <Widget>[
               TextButton(

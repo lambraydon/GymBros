@@ -18,7 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: backgroundColor,
+          flexibleSpace: gradientColor,
           title: Form(
             child: TextFormField(
               controller: searchController,

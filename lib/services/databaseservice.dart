@@ -175,7 +175,7 @@ class DatabaseService {
   }
 
   Future<String> uploadPost(String description, Uint8List file, String uid,
-      String username, String profImage) async {
+      String username, String profImage, Workout workout, List<String> taggedUsers ) async {
     // asking uid here because we dont want to make extra calls to firebase auth when we can just get from our state management
     String res = "Some error occurred";
     try {
@@ -191,6 +191,8 @@ class DatabaseService {
         datePublished: DateTime.now(),
         postUrl: photoUrl,
         profImage: profImage,
+        workout: workout,
+        taggedUsers: taggedUsers
       );
       _firestore.collection('posts').doc(postId).set(post.toJson());
       res = "success";

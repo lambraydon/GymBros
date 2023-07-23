@@ -141,7 +141,7 @@ class _HistoryLog extends State<HistoryLog> {
         builder: (context, value, child) => Scaffold(
           backgroundColor: backgroundColor,
           appBar: AppBar(
-            backgroundColor: backgroundColor,
+            flexibleSpace: gradientColor,
             elevation: 0.0,
             automaticallyImplyLeading: false,
             actions: <Widget>[

@@ -10,7 +10,7 @@ class Feed extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: appBarColor,
+          flexibleSpace: gradientColor,
           title: const Text("GymBros"),
           /*
           actions: [
