@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gymbros/screens/components/my_num_days.dart';
 import 'package:gymbros/services/auth_service.dart';
 import 'package:gymbros/shared/constants.dart';
+import 'package:gymbros/shared/image_util.dart';
 
 class GoalSetPage extends StatefulWidget {
   const GoalSetPage({Key? key}) : super(key: key);
@@ -71,7 +72,7 @@ class _GoalSetPageState extends State<GoalSetPage> {
                                     //edit button
                                     IconButton(
                                         onPressed: () {
-                                          editField("Workout Frequency");
+                                          editFreqField("Workout Frequency");
                                         },
                                         icon: Icon(
                                           Icons.settings,
@@ -128,7 +129,7 @@ class _GoalSetPageState extends State<GoalSetPage> {
                                     //edit button
                                     IconButton(
                                         onPressed: () {
-                                          editField("Workout Length");
+                                          editLengthField("Workout Length");
                                         },
                                         icon: Icon(
                                           Icons.settings,
@@ -139,7 +140,7 @@ class _GoalSetPageState extends State<GoalSetPage> {
                                 (userData['Workout Length'] == null)
                                     ? const Text('You have not set a goal')
                                     : Text(
-                                        userData['Length'],
+                                        userData['Workout Length'],
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       )
@@ -159,7 +160,7 @@ class _GoalSetPageState extends State<GoalSetPage> {
         });
   }
 
-  Future<void> editField(String field) async {
+  Future<void> editFreqField(String field) async {
     String newVal = "";
     await showDialog(
         context: context,
@@ -170,11 +171,12 @@ class _GoalSetPageState extends State<GoalSetPage> {
                     color: Colors.white,
                   )),
               content: TextField(
+                keyboardType: TextInputType.number,
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: "Enter new $field",
-                  hintStyle: const TextStyle(color: Colors.grey),
+                decoration: const InputDecoration(
+                  hintText: "Enter a number between 1 to 7",
+                  hintStyle: TextStyle(color: Colors.grey),
                 ),
                 onChanged: (value) {
                   newVal = value;
@@ -192,6 +194,50 @@ class _GoalSetPageState extends State<GoalSetPage> {
                         style: TextStyle(color: Colors.white)))
               ],
             ));
+    if (newVal.trim().isNotEmpty) {
+      if (int.parse(newVal) > 0 && int.parse(newVal) <= 7) {
+        await userProfiles.doc(uid).update({field: newVal});
+      } else {
+        showSnackBar(context, "Input a number between 1 to 7!");
+      }
+
+    }
+  }
+
+  Future<void> editLengthField(String field) async {
+    String newVal = "";
+    await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Text("Edit $field",
+              style: const TextStyle(
+                color: Colors.white,
+              )),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
+              hintText: "Enter a number in minutes",
+              hintStyle: TextStyle(color: Colors.grey),
+            ),
+            onChanged: (value) {
+              newVal = value;
+            },
+          ),
+          actions: [
+            // cancel Button
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel",
+                    style: TextStyle(color: Colors.white))),
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(newVal),
+                child: const Text("Save",
+                    style: TextStyle(color: Colors.white)))
+          ],
+        ));
     if (newVal.trim().isNotEmpty) {
       await userProfiles.doc(uid).update({field: newVal});
     }
@@ -233,7 +279,12 @@ class _GoalSetPageState extends State<GoalSetPage> {
           ],
         ));
     if (newVal.trim().isNotEmpty) {
-      await userProfiles.doc(uid).update({field: newVal});
+      if (int.parse(newVal) > 0) {
+        await userProfiles.doc(uid).update({field: newVal});
+      } else {
+        showSnackBar(context, "Input a number greater than 0!");
+      }
+
     }
   }
 }
