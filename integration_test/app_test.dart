@@ -18,12 +18,14 @@ void main() async{
         (WidgetTester tester) async {
       // Testing starts at the root widget in the widget tree
       await tester.pumpWidget(MyApp());
+      log("myApp pumped");
 
       await tester.tap(find.text("Sign in with email".toUpperCase()));
       // Wait for all the animations to finish
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(ElevatedButton));
+      log("sign in attempted");
 
       await tester.pumpAndSettle();
 
