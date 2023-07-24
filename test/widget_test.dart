@@ -206,17 +206,17 @@ void main() {
   testWidgets(
       "Navigating to the sign up page, attempting to sign up without providing information will return and error",
           (WidgetTester tester) async {
-        // // Testing starts at the root widget in the widget tree
-        // await tester.pumpWidget(const MyApp());
-        //
-        // await tester.tap(find.text("Log in"));
-        // // Wait for all the animations to finish
-        // await tester.pumpAndSettle();
-        //
-        // await tester.tap(find.byType(ElevatedButton));
-        //
-        // await tester.pumpAndSettle();
-        //
+        // Testing starts at the root widget in the widget tree
+        await tester.pumpWidget(const MyApp());
+
+        await tester.tap(find.text("Log in"));
+        // Wait for all the animations to finish
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(ElevatedButton));
+
+        await tester.pumpAndSettle();
+
         // expect(find.byType(DirectLogIn), findsOneWidget);
         // expect(find.text('Enter a password longer than 6 chars!'), findsOneWidget);
         // expect(find.text("Enter an email"), findsOneWidget);

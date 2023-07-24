@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gymbros/screens/workoutTracker/logger.dart';
 import '../workoutTracker/workout.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -17,12 +16,12 @@ class RecommendedWorkoutTile extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Logger(
-                    workout: workout,
-                  )));
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => Logger(
+          //           workout: workout,
+          //         )));
         },
         child: Container(
           padding: const EdgeInsets.all(24),

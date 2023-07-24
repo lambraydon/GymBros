@@ -282,6 +282,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                     "Target: ${widget.workoutFrequency * widget.workoutLen} mins"),

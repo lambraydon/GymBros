@@ -7,6 +7,7 @@ import 'package:gymbros/screens/workoutRecommender/recommended_model.dart';
 import 'package:gymbros/shared/constants.dart';
 import 'package:gymbros/shared/custom_text_button.dart';
 import '../../services/gpt_api_service.dart';
+import '../workoutTracker/logger.dart';
 import '../workoutTracker/set.dart';
 import '../workoutTracker/exercise.dart';
 import '../workoutTracker/workout.dart';
@@ -86,8 +87,8 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
 
     // API call to GPT model
     try {
-      model = await GPTApiService(httpClient: http.Client()).sendMessage(
-          message: inputController.text, modelId: "gpt-3.5-turbo");
+      model = await GPTApiService(httpClient: http.Client())
+          .sendMessage(message: inputController.text, modelId: "gpt-3.5-turbo");
       log(model.description);
       //log(model.workout.toJson().toString());
     } catch (error) {
@@ -96,8 +97,7 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
     }
 
     setState(() {
-      description =
-          "${model.description}\n\nClick on the tile below to begin your workout!";
+      description = model.description;
       workoutTile = RecommendedWorkoutTile(workout: model.workout);
       _isLoading = false;
       _showNewWidget = true;
@@ -151,7 +151,8 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
                       decoration: InputDecoration(
                         fillColor: filled,
                         filled: true,
-                        hintText: "GymBot recommends you a workout based on what you key in \n\nE.g: $hintText",
+                        hintText:
+                            "GymBot recommends you a workout based on what you key in \n\nE.g: $hintText",
                         hintMaxLines: 6,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -210,34 +211,6 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
                               ),
                               child: Column(
                                 children: [
-                                  // Padding(
-                                  //   padding:
-                                  //       const EdgeInsets.fromLTRB(0, 0, 0, 6.0),
-                                  //   child: Row(
-                                  //     children: [
-                                  //       ClipOval(
-                                  //         child: Image.network(
-                                  //           'https://cdn-icons-png.flaticon.com/128/8943/8943377.png',
-                                  //           // Replace with your image URL
-                                  //           width: 40, // Set your desired width
-                                  //           height: 40, // Set your desired height
-                                  //           fit: BoxFit
-                                  //               .cover, // Set the image fitting mode
-                                  //         ),
-                                  //       ),
-                                  //       const SizedBox(
-                                  //         width: 8,
-                                  //       ),
-                                  //       const Text(
-                                  //         "Gymbot:",
-                                  //         style: TextStyle(
-                                  //             fontWeight: FontWeight.bold,
-                                  //             fontSize: 17,
-                                  //             color: appBarColor),
-                                  //       )
-                                  //     ],
-                                  //   ),
-                                  // ),
                                   Column(
                                     children: [
                                       AnimatedTextKit(
@@ -265,6 +238,46 @@ class _WorkoutRecommenderState extends State<WorkoutRecommender> {
                                             : const SizedBox.shrink(),
                                       ),
                                     ],
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: _showWorkoutTile ? 1.0 : 0.0,
+                                    duration: const Duration(milliseconds: 800),
+                                    curve: Curves.easeIn,
+                                    child: _showWorkoutTile
+                                        ? TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Logger(
+                                                            workout:
+                                                                model.workout,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 16.0),
+                                              decoration: BoxDecoration(
+                                                color: appBarColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Text(
+                                                "Start Workout",
+                                                style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
                                   ),
                                 ],
                               ),

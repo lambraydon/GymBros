@@ -16,39 +16,7 @@ class WorkoutData extends ChangeNotifier {
    - Each workout has a name and list of exercises
 
    */
-  List<Workout> workoutList = [
-    Workout(
-      name: "Morning Workout",
-      exercises: [
-        Exercise(
-            name: "Lateral Raise",
-            sets: [
-              Set(index: 1, weight: 10, reps: 10, isCompleted: true),
-              Set(index: 2, weight: 10, reps: 10, isCompleted: true)
-            ]
-        ),
-        Exercise(
-            name: "Bench Press",
-            sets: [
-              Set(index: 1, weight: 10, reps: 10, isCompleted: true),
-              Set(index: 2, weight: 10, reps: 10, isCompleted: true)
-            ]
-        )
-      ]
-    ),
-    Workout(
-        name: "Afternoon Workout",
-        exercises: [
-          Exercise(
-              name: "Lateral Raise",
-              sets: [
-                Set(index: 1, weight: 10, reps: 10, isCompleted: true),
-                Set(index: 2, weight: 10, reps: 10, isCompleted: true)
-              ]
-          )
-        ]
-    )
-  ];
+  List<Workout> workoutList = [];
 
 
   // Initialise workout list by reading from db

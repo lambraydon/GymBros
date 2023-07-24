@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gymbros/screens/authenticate/direct_login.dart';
 import 'package:gymbros/screens/authenticate/sign_in.dart';
 
+import '../../shared/constants.dart';
+
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
 
@@ -53,30 +55,32 @@ class _LogInState extends State<LogIn> {
                   ),
                 ),
                 const SizedBox(height: 64.0),
-                ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.facebook,
-                    ),
-                    label: Text(
-                      "Sign in with Facebook".toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DirectLogIn())
+                      );
+                    },
                   style: ButtonStyle(
                           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                           backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff4a5998)),
                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0),
-                                  side: const BorderSide(color: Color(0xff4a5998))
+                                  side: const BorderSide(color: appBarColor)
                               )
                           ),
                           elevation: MaterialStateProperty.all<double>(0),
                           minimumSize: MaterialStateProperty.all<Size>(const Size(283, 56)),
-                      )
+                      ),
+                    child: Text(
+                      "Log In".toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
                 ),
                 const SizedBox(height: 32.0),
                 ElevatedButton.icon(
@@ -110,43 +114,6 @@ class _LogInState extends State<LogIn> {
                     )
                 ),
                 const SizedBox(height: 32.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text(
-                      "Already have an account?",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => DirectLogIn())
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              const RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.white)
-                              )
-                          ),
-                        ),
-                      child: const Text(
-                        "Log in",
-                        style: TextStyle(
-                          color: Color(0xff6deb4d),
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    )
-                  ],
-                )
               ],
             ),
       ),

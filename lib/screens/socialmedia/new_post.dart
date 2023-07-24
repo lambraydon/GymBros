@@ -104,10 +104,6 @@ class _NewPostState extends State<NewPost> {
       setState(() {
         isLoading = false;
       });
-      showSnackBar(
-        context,
-        err.toString(),
-      );
     }
   }
 
@@ -313,7 +309,7 @@ class _NewPostState extends State<NewPost> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('snapshot error'));
           } else {
-            return const Center(child: Text('another Error'));
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }

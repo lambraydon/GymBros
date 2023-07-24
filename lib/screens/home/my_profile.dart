@@ -296,7 +296,7 @@ class _MyProfileState extends State<MyProfile> {
         context: context,
         builder: (context) => AlertDialog(
               backgroundColor: Colors.grey[900],
-              title: Text("Edit + $field",
+              title: Text("Edit $field",
                   style: const TextStyle(
                     color: Colors.white,
                   )),
