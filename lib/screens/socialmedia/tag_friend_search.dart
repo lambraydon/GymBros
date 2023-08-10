@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gymbros/services/auth_service.dart';
 import 'package:gymbros/shared/constants.dart';
+
+import '../home/view_profile.dart';
 
 class TagFriendSearchScreen extends StatefulWidget {
   const TagFriendSearchScreen({Key? key}) : super(key: key);
@@ -10,8 +13,21 @@ class TagFriendSearchScreen extends StatefulWidget {
 }
 
 class _TagFriendSearchScreen extends State<TagFriendSearchScreen> {
+  final String selfUid = AuthService().getUid();
+  String name = "";
   final TextEditingController searchController = TextEditingController();
-  bool isShowUsers = false;
+
+  void goToViewProfile(String uid) {
+    if (uid == selfUid) {
+      Navigator.pop(context);
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ViewProfile(
+          uid: uid,
+        ),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,25 +37,20 @@ class _TagFriendSearchScreen extends State<TagFriendSearchScreen> {
           title: Form(
             child: TextFormField(
               controller: searchController,
-              decoration:
-              const InputDecoration(labelText: 'Search for a user...', labelStyle: TextStyle(color: Colors.white) ),
-              onFieldSubmitted: (String _) {
+              decoration: const InputDecoration(
+                  labelText: 'Search for a user...',
+                  labelStyle: TextStyle(color: Colors.white)),
+              onChanged: (String _) {
                 setState(() {
-                  isShowUsers = true;
+                  name = searchController.text;
                 });
               },
             ),
           ),
         ),
-        body: isShowUsers
-            ? FutureBuilder(
-          future: FirebaseFirestore.instance
-              .collection('userProfiles')
-              .where(
-            'Name',
-            isGreaterThanOrEqualTo: searchController.text,
-          )
-              .get(),
+        body: StreamBuilder(
+          stream:
+              FirebaseFirestore.instance.collection('userProfiles').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(
@@ -47,32 +58,39 @@ class _TagFriendSearchScreen extends State<TagFriendSearchScreen> {
               );
             }
             return ListView.builder(
-              itemCount: (snapshot.data! as dynamic).docs.length,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    String username = (snapshot.data! as dynamic).docs[index]['Name'];
-                    if (username.isNotEmpty) {
-                      Navigator.pop(context, username);
-                    }
-                  },
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        (snapshot.data! as dynamic).docs[index]
-                        ['profilephotoURL'],
+                var data =
+                    snapshot.data!.docs[index].data();
+                if (name.isEmpty) {
+                } else if (data['Name']
+                    .toString()
+                    .toLowerCase()
+                    .startsWith(name.toLowerCase())) {
+                  return InkWell(
+                    onTap: () {
+                      String username =
+                          data['Name'];
+                      if (username.isNotEmpty) {
+                        Navigator.pop(context, username);
+                      }
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          data['profilephotoURL'],
+                        ),
+                        radius: 16,
                       ),
-                      radius: 16,
+                      title: Text(
+                        data['Name'],
+                      ),
                     ),
-                    title: Text(
-                      (snapshot.data! as dynamic).docs[index]['Name'],
-                    ),
-                  ),
-                );
+                  );
+                }
               },
             );
           },
-        )
-            : const Center(child: Text("Search for a User")));
+        ));
   }
 }

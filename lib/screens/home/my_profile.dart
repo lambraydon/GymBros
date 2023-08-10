@@ -239,8 +239,11 @@ class _MyProfileState extends State<MyProfile> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  buildStatColumn(userData['Followers'].length,
-                                      "followers"),
+                                  InkWell(
+                                    child: buildStatColumn(userData['Followers'].length,
+                                        "followers"),
+                                    onTap: () {}
+                                  ),
                                   buildStatColumn(userData['Following'].length,
                                       "following"),
                                 ],

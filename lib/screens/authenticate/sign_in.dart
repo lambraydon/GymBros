@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymbros/services/auth_service.dart';
 import 'package:gymbros/shared/constants.dart';
+import 'package:gymbros/shared/image_util.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -140,20 +141,25 @@ class _SignInState extends State<SignIn> {
                             setState(() {
                               isLoading = true;
                             });
-                            dynamic result =
-                                await _auth.registerWithEmailAndPassword(
-                                    email, password, username);
-                            if (result == null) {
-                              setState(() {
-                                error = "Please provide a valid email";
-                              });
-                            } else {
-                              setState(() {
-                                isLoading = false;
-                              });
-                              Navigator.pop(context);
-                            }
+                          try {
+                              dynamic result =
+                              await _auth.registerWithEmailAndPassword(
+                                  email, password, username);
+                              if (result == null) {
+                                setState(() {
+                                  error = "Please provide a valid email";
+                                });
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.pop(context);
+                              }
+                            } catch (error){
+                              showSnackBar(context, error.toString());
                           }
+                          }
+
                         },
                         style: ButtonStyle(
                           foregroundColor:

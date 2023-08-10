@@ -1,6 +1,7 @@
 import 'package:gymbros/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/shared/constants.dart';
+import 'package:gymbros/shared/image_util.dart';
 
 class DirectLogIn extends StatefulWidget {
 
@@ -113,21 +114,25 @@ class _DirectLogInState extends State<DirectLogIn> {
                           setState(() {
                             isLoading = true;
                           });
-                          dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-                          if(result == null) {
-                            setState(() {
-                              isLoading = false;
-                              error = "Invalid User Email and Password!";
-                            });
-                          } else {
-                            setState(() {
-                              isLoading = false;
-                            });
-                            Navigator.pop(context);
+                          try {
+                            dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                            if(result == null) {
+                              setState(() {
+                                isLoading = false;
+                                error = "Invalid User Email and Password!";
+                              });
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Navigator.pop(context);
+                            }
+                        } catch (error) {
+                            showSnackBar(context, error.toString());
                           }
                         }
-
-                      },
+                        }
+                      ,
                       style: ButtonStyle(
                         foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                         backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff6deb4d)),
