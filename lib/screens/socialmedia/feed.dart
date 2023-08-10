@@ -41,7 +41,7 @@ class Feed extends StatelessWidget {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (ctx, index) {
                             var data = snapshot.data!.docs[index].data();
-                            if (userData['Following'].contains(data["uid"])) {
+                            if (userData['Following'].contains(data["uid"]) || data["uid"] == userData['Uid']) {
                               return PostView(
                                 snap: snapshot.data!.docs[index].data(),
                               );
