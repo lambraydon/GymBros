@@ -8,6 +8,7 @@ import '../../services/auth_service.dart';
 
 class WorkoutData extends ChangeNotifier {
   final DatabaseService db = DatabaseService(uid: AuthService().getUid());
+
   /*
 
    WORKOUT DATA STRUCTURE
@@ -16,8 +17,11 @@ class WorkoutData extends ChangeNotifier {
    - Each workout has a name and list of exercises
 
    */
-  List<Workout> workoutList = [];
-
+  List<Workout> workoutList = [
+    Workout(
+        name: "Morning Workout",
+        exercises: [Exercise(name: "Lateral Raises", sets: [])])
+  ];
 
   // Initialise workout list by reading from db
   void initialiseWorkoutList() {
@@ -28,7 +32,6 @@ class WorkoutData extends ChangeNotifier {
   List<Workout> getWorkoutList() {
     return workoutList;
   }
-
 
   // add a workout to workout list
   void addWorkout(Workout workout) {

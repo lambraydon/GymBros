@@ -1,14 +1,16 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/home/analytics/goalsetpage.dart';
 import 'package:gymbros/screens/home/analytics/lineChart.dart';
 import 'package:gymbros/screens/workoutTracker/exercise.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import '../../../services/auth_service.dart';
+import '../../../services/database_service.dart';
 import '../../../shared/constants.dart';
 import '../../calendar/calendar.dart';
+import '../../calendar/calendar_utils.dart';
 import '../../workoutTracker/gym_exercise_list.dart';
+import '../../workoutTracker/workout.dart';
 import '../../workoutTracker/workout_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -30,24 +32,95 @@ class AnalyticsView extends StatefulWidget {
 }
 
 class _AnalyticsViewState extends State<AnalyticsView> {
-  // final DatabaseService db = DatabaseService(uid: AuthService().getUid());
-  // int workoutFrequency = 0;
-  // int workoutLen = 0;
-  // int actualFrequency = 0;
-  // int actualLen = 0;
+  int workoutFrequency = 0;
+  int workoutLen = 0;
+  int actualFrequency = 0;
+  int actualLen = 0;
+  final DatabaseService db = DatabaseService(uid: AuthService().getUid());
 
   List<Color> gradientColors = [appBarColor, greyColor];
 
   @override
   void initState() {
-    setState(() {
-      log("hello");
-      // actualFrequency = getNumWorkoutsThisWeek();
-      // actualLen = getDurationThisWeek();
-      //getGoal();
-    });
+    workoutFrequency = widget.workoutFrequency;
+    workoutLen = widget.workoutLen;
+    actualFrequency = widget.actualFrequency;
+    actualLen = widget.actualLen;
     super.initState();
   }
+
+  // get DateTime representing the start date of the week
+  DateTime getStartOfWeek(DateTime dateTime) {
+    int difference = dateTime.weekday - DateTime.monday;
+
+    if (difference < 0) {
+      difference = -difference;
+    }
+
+    DateTime startOfWeek = dateTime.subtract(Duration(days: difference));
+
+    return startOfWeek;
+  }
+
+  // get DateTime representing the end date of the week
+  DateTime getEndOfWeek(DateTime dateTime) {
+    int difference = DateTime.sunday - dateTime.weekday;
+
+    if (difference < 0) {
+      difference = -difference;
+    }
+
+    DateTime endOfWeek = dateTime.add(Duration(days: difference));
+
+    return endOfWeek;
+  }
+
+  // get list of workouts completed this week
+  List<Workout> getWorkoutsThisWeek() {
+    DateTime start = getStartOfWeek(DateTime.now());
+    DateTime end = getEndOfWeek(DateTime.now());
+    return CalendarUtils.getEventsForRange(start, end,
+        Provider.of<WorkoutData>(context, listen: false).workoutList);
+  }
+
+  // get actual workout frequency this week
+  int getNumWorkoutsThisWeek() {
+    List<Workout> workoutList = getWorkoutsThisWeek();
+    return workoutList.length;
+  }
+
+  // get actual duration this week
+  int getDurationThisWeek() {
+    List<Workout> workoutList = getWorkoutsThisWeek();
+    int timeInSec = 0;
+
+    for (var workout in workoutList) {
+      timeInSec += workout.workoutDurationInSec;
+    }
+
+    return timeInSec;
+  }
+
+  // get freq and duration goals from db
+  void getGoal() async {
+    int freq = await db.getWorkoutFrequencyFromDb();
+    int len = await db.getWorkoutLengthFromDb();
+
+    setState(() {
+      workoutFrequency = freq;
+      actualLen = len;
+    });
+  }
+
+  void syncData() {
+    setState(() {
+      getGoal();
+      actualFrequency= getNumWorkoutsThisWeek();
+      actualLen = getDurationThisWeek();
+    });
+  }
+
+
 
   Exercise findExerciseWithMaxOneRM(List<Exercise> exercises) {
     if (exercises.isEmpty) {
@@ -173,6 +246,29 @@ class _AnalyticsViewState extends State<AnalyticsView> {
           ),
         ),
         Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton(
+            onPressed: syncData,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 12.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: appBarColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                "Sync Workout Data",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+        Padding(
           padding: const EdgeInsets.all(19.0),
           child: InkWell(
             onTap: () {
@@ -209,8 +305,8 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Column(
                                 children: [
-                                  Text("Target: ${widget.workoutFrequency}"),
-                                  Text("Actual: ${widget.actualFrequency}"),
+                                  Text("Target: $workoutFrequency"),
+                                  Text("Actual: $actualFrequency"),
                                 ],
                               ),
                             ),
@@ -224,11 +320,11 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                         builder: (BuildContext context, StateSetter setState) {
                           return CircularPercentIndicator(
                             lineWidth: 10,
-                            percent: widget.actualFrequency >=
-                                    widget.workoutFrequency
+                            percent: actualFrequency >=
+                                    workoutFrequency
                                 ? 1.0
-                                : widget.actualFrequency /
-                                    widget.workoutFrequency,
+                                : actualFrequency /
+                                    workoutFrequency,
                             radius: 45,
                             animation: true,
                             animationDuration: 2000,
@@ -239,9 +335,9 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  widget.workoutFrequency == 0
+                                  workoutFrequency == 0
                                       ? "0"
-                                      : "${((widget.actualFrequency / widget.workoutFrequency) * 100).round()}%",
+                                      : "${((actualFrequency / workoutFrequency) * 100).round()}%",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20.0),
@@ -285,9 +381,9 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    "Target: ${widget.workoutFrequency * widget.workoutLen} mins"),
+                                    "Target: ${workoutFrequency * workoutLen} mins"),
                                 Text(
-                                    "Actual: ${(widget.actualLen / 60).round()} mins"),
+                                    "Actual: ${(actualLen / 60).round()} mins"),
                               ],
                             ),
                           ),
@@ -301,13 +397,13 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                       builder: (BuildContext context, StateSetter setState) {
                         return CircularPercentIndicator(
                           lineWidth: 10,
-                          percent: (widget.actualLen / 60) /
-                                      (widget.workoutFrequency *
-                                          widget.workoutLen) >=
+                          percent: (actualLen / 60) /
+                                      (workoutFrequency *
+                                          workoutLen) >=
                                   1
                               ? 1.0
-                              : (widget.actualLen / 60) /
-                                  (widget.workoutFrequency * widget.workoutLen),
+                              : (actualLen / 60) /
+                                  (workoutFrequency * workoutLen),
                           radius: 45,
                           animation: true,
                           animationDuration: 2000,
@@ -318,10 +414,10 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                widget.workoutFrequency == 0 ||
-                                        widget.workoutLen == 0
+                                workoutFrequency == 0 ||
+                                        workoutLen == 0
                                     ? "0"
-                                    : "${((widget.actualLen / 60) / (widget.workoutFrequency * widget.workoutLen) * 100).round()}%",
+                                    : "${((actualLen / 60) / (workoutFrequency * workoutLen) * 100).round()}%",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20.0),
