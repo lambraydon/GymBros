@@ -49,8 +49,10 @@ class _TagFriendSearchScreen extends State<TagFriendSearchScreen> {
           ),
         ),
         body: StreamBuilder(
-          stream:
-              FirebaseFirestore.instance.collection('userProfiles').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('userProfiles')
+              .orderBy("Name").startAt([name])
+              .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(
@@ -60,17 +62,34 @@ class _TagFriendSearchScreen extends State<TagFriendSearchScreen> {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var data =
-                    snapshot.data!.docs[index].data();
+                var data = snapshot.data!.docs[index].data();
                 if (name.isEmpty) {
+                  return InkWell(
+                    onTap: () {
+                      String username = data['Name'];
+                      if (username.isNotEmpty) {
+                        Navigator.pop(context, username);
+                      }
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          data['profilephotoURL'],
+                        ),
+                        radius: 16,
+                      ),
+                      title: Text(
+                        data['Name'],
+                      ),
+                    ),
+                  );
                 } else if (data['Name']
                     .toString()
                     .toLowerCase()
                     .startsWith(name.toLowerCase())) {
                   return InkWell(
                     onTap: () {
-                      String username =
-                          data['Name'];
+                      String username = data['Name'];
                       if (username.isNotEmpty) {
                         Navigator.pop(context, username);
                       }

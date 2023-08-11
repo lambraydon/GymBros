@@ -50,7 +50,10 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream:
-              FirebaseFirestore.instance.collection('userProfiles').snapshots(),
+          FirebaseFirestore.instance
+              .collection('userProfiles')
+              .orderBy("Name").startAt([name]W)
+              .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(
