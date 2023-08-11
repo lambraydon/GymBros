@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/home/view_profile.dart';
@@ -52,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
           stream:
           FirebaseFirestore.instance
               .collection('userProfiles')
-              .orderBy("Name").startAt([name]W)
+              .orderBy("Name").startAt([name])
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
