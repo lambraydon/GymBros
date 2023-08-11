@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gymbros/screens/home/view_profile.dart';
+import 'package:gymbros/services/auth_service.dart';
 import 'package:gymbros/shared/constants.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -13,8 +14,21 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final String selfUid = AuthService().getUid();
+  String name = "";
   final TextEditingController searchController = TextEditingController();
-  bool isShowUsers = false;
+
+  void goToViewProfile(String uid) {
+    if (uid == selfUid) {
+      Navigator.pop(context);
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ViewProfile(
+          uid: uid,
+        ),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,56 +42,69 @@ class _SearchScreenState extends State<SearchScreen> {
                   const InputDecoration(labelText: 'Search for a user...'),
               onChanged: (String _) {
                 setState(() {
-                  isShowUsers = true;
+                  name = searchController.text;
                 });
               },
             ),
           ),
         ),
-        body: isShowUsers
-            ? FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection('userProfiles')
-                    .where(
-                      'Name',
-                      isGreaterThanOrEqualTo: searchController.text,
-                    )
-                    .get(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: (snapshot.data! as dynamic).docs.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ViewProfile(
-                              uid: (snapshot.data! as dynamic).docs[index]
-                                  ['Uid'],
-                            ),
-                          ),
+        body: StreamBuilder<QuerySnapshot>(
+          stream:
+              FirebaseFirestore.instance.collection('userProfiles').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var data =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                if (name.isEmpty) {
+                  return InkWell(
+                    onTap: () => goToViewProfile(data["Uid"]),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          data['profilephotoURL'],
                         ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              (snapshot.data! as dynamic).docs[index]
-                                  ['profilephotoURL'],
-                            ),
-                            radius: 16,
-                          ),
-                          title: Text(
-                            (snapshot.data! as dynamic).docs[index]['Name'],
-                          ),
-                        ),
-                      );
-                    },
+                        radius: 16,
+                      ),
+                      title: Text(
+                        data['Name'],
+                      ),
+                    ),
                   );
-                },
-              )
-            : const Center(child: Text("Search for a User")));
+                } else if (data['Name']
+                    .toString()
+                    .toLowerCase()
+                    .startsWith(name.toLowerCase())) {
+                  return InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ViewProfile(
+                          uid: data['Uid'],
+                        ),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          data['profilephotoURL'],
+                        ),
+                        radius: 16,
+                      ),
+                      title: Text(
+                        data['Name'],
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          },
+        ));
   }
 }
